@@ -5,7 +5,13 @@ from datetime import datetime
 if sys.argv[1] == 'seed':
 	order_ids=Order.objects.insert(
 	[
-		Order(recieve_time=datetime(2019,8,9,0,0),district='中正區',address='北寧路2號',store=[])
+		Order(recieve_time=datetime(2019,8,9,0,0),delivery_time=(2019,8,9,1,0),
+			district='中正區',address='北寧路2號',
+
+			delivery_state='pending',store_state='confirmed')
+		
+		
+
 	]
 	,load_bulk=False)
 	with open('ids.txt','a') as f:
