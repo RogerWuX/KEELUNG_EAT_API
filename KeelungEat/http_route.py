@@ -32,17 +32,22 @@ def current_order_delivery(delivery_id):
 	print('delivery current_order')
 	try:
 		current_order=Order.objects(delivery_id=delivery_id,delivery_state__in=['accepted','delivering']).exclude('delivery_id').as_pymongo().get()
+		for field in ['recieve_time','delivery_time','consumer_id','store_id']:
+			current_order[field]=str(current_order[field])
 		return jsonify(json.dumps(current_order))
 	except :
-		pass
+		return jsonify({"message":'failed'})
 	
 	
 
 @app.route('/consumer/<consumer_id>/current_orders',methods=['get'])
 def current_order_consumer(consumer_id):
 	print('consumer current_order')
-	current_order=Order.objects(consumer_id=consumer_id,delivery_state__ne='finished').exclude('consumer_id').as_pymongo().get()
-	print(current_order)
-	#Order.to_string_dict(current_order)
-	return jsonify(json.dumps(current_order))
+	try:
+		current_order=Order.objects(consumer_id=consumer_id,delivery_state__ne='finished').exclude('consumer_id').as_pymongo().get()
+		for field in ['recieve_time','delivery_time','store_id','delivery_id']:
+				current_order[field]=str(current_order[field])
+		return jsonify(json.dumps(current_order))
+	except:
+		return jsonify({"message":'failed'})
 	
