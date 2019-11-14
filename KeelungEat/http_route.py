@@ -21,10 +21,14 @@ def order_post():
 		store_state='unconfirmed'
 	)
 	order.save()
-	socketio.emit('order_data',order.to_json(),namespace='/admin',broadcast=True)
-	socketio.emit('order_data',order.to_json(),namespace='/delivery_man',broadcast=True)
-	
-	return jsonify({'id':str(order.id)})
+	order=dict(order.to_mongo())
+	for field in ['_id','recieve_time','delivery_time','store_id','consumer_id','delivery_id']:
+		order[field]=str(order[field])
+	order_json=json.dumps(order)
+	socketio.emit('order_data',order_json,namespace='/admin',broadcast=True)
+	socketio.emit('order_data',order_json,namespace='/delivery_man',broadcast=True)
+
+	return jsonify({'_id':order['_id']})
 
 
 @app.route('/delivery/<delivery_id>/current_orders',methods=['get'])
@@ -32,7 +36,7 @@ def current_order_delivery(delivery_id):
 	print('delivery current_order')
 	try:
 		current_order=Order.objects(delivery_id=delivery_id,delivery_state__in=['accepted','delivering']).exclude('delivery_id').as_pymongo().get()
-		for field in ['recieve_time','delivery_time','consumer_id','store_id']:
+		for field in ['_id','recieve_time','delivery_time','consumer_id','store_id']:
 			current_order[field]=str(current_order[field])
 		return jsonify(json.dumps(current_order))
 	except :
@@ -45,7 +49,7 @@ def current_order_consumer(consumer_id):
 	print('consumer current_order')
 	try:
 		current_order=Order.objects(consumer_id=consumer_id,delivery_state__ne='finished').exclude('consumer_id').as_pymongo().get()
-		for field in ['recieve_time','delivery_time','store_id','delivery_id']:
+		for field in ['_id','recieve_time','delivery_time','store_id','delivery_id']:
 				current_order[field]=str(current_order[field])
 		return jsonify(json.dumps(current_order))
 	except:

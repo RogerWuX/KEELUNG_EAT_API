@@ -62,7 +62,7 @@ var socketTestInfos=[
 	event_handlers:[
 	{
 		event_name:'connect',
-		handler:function(){console.log('connect established')}
+		handler:function(){console.log('admin namespace connect established')}
 	},
 	{
 		event_name:'order_data',
@@ -103,7 +103,7 @@ var socketTestInfos=[
 	event_handlers:[
 	{
 		event_name:'connect',
-		handler:function(){console.log('connect established')}
+		handler:function(){console.log('delivery_man namespace connect established')}
 	},
 	{
 		event_name:'order_data',
@@ -130,7 +130,7 @@ var socketTestInfos=[
 	event_handlers:[
 	{
 		event_name:'connect',
-		handler:function(){console.log('connect established')}
+		handler:function(){console.log('restaurant namespace connect established')}
 	},
 	{
 		event_name:'order_data',
@@ -147,8 +147,6 @@ var socketTestInfos=[
 		data:'5dc3c34ff1733b1e786c8388'
 	}
 	]
-		
-	
 }
 ]
 
