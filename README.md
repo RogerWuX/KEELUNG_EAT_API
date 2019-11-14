@@ -2,4 +2,6 @@
 
 pip -r requirements.txt
 
-run.bat
+python run.py
+
+
