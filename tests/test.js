@@ -21,16 +21,15 @@ function createButton(buttonName,id,onclickFunctionName)
 var ajaxTestInfos=[
 {
 	buttonName:"新增訂單",
-	url:'http://localhost:5000/order',
+	url:'http://127.0.0.1:5000/order',
 	type:"POST",
 	data:{
 		recieve_time:'2019-05-06 07:00:00',
-		delivery_time:'2019-05-06 08:00:00',
+
 		district:'中正區',
 		address:'北寧路2號',
 		consumer_id:'5dc3c34ff1733b1e786c8389',
 		store_id:'5dc3c34ff1733b1e786c8388',
-		delivery_id:'5dc3c34ff1733b1e786c8348',
 		foods:[
 		{
 			food_id:'5dc3c34ff1733b1e786c8388',

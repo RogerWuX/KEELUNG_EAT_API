@@ -5,16 +5,21 @@ from flask import request,jsonify
 
 from . import app,socketio
 
+
+@app.route('/',methods=['get'])
+def test():
+	return jsonify({'message':'hello_world'})
+
 @app.route('/order',methods=['post'])
 def order_post():
 	print('order_post')
 	order=Order(
 		recieve_time=request.json.get('recieve_time'),
-		delivery_time=request.json.get('delivery_time'),
+		delivery_time=None,
 		district=request.json.get('district'),
 		address=request.json.get('address'),
 		consumer_id=request.json.get('consumer_id'),
-		delivery_id=request.json.get('delivery_id'),		
+		delivery_id=None,		
 		store_id=request.json.get('store_id'),
 		foods=request.json.get('foods'),
 		delivery_state='pending',
@@ -22,12 +27,12 @@ def order_post():
 	)
 	order.save()
 	order=dict(order.to_mongo())
-	for field in ['_id','recieve_time','delivery_time','store_id','consumer_id','delivery_id']:
+	for field in ['_id','recieve_time','store_id','consumer_id']:
 		order[field]=str(order[field])
 	order_json=json.dumps(order)
 	socketio.emit('order_data',order_json,namespace='/admin',broadcast=True)
 	socketio.emit('order_data',order_json,namespace='/delivery_man',broadcast=True)
-
+	socketio.emit('order_data',order_json,namespace='/restaurant',room=order['store_id'],broadcast=True)
 	return jsonify({'_id':order['_id']})
 
 
