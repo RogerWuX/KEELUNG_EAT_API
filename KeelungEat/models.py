@@ -1,5 +1,5 @@
 from mongoengine import *
-connect(host='mongodb+srv://WuRoger:RogerWuIsMe@cluster0-upq73.gcp.mongodb.net/KEELUNG_EAT?retryWrites=true&w=majority')
+connect(host='mongodb+srv://KeelungEatServer:YW4EY3uAqMi1AcNl@cluster0-upq73.gcp.mongodb.net/KEELUNG_EAT?retryWrites=true&w=majority')
 
 class Order(Document):
 	delivery_state_choice=['pending','accepted','delivering','finished']
