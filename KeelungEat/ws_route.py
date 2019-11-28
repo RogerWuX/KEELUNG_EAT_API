@@ -91,3 +91,5 @@ def order_accept_handler(order_id):
 @socketio.on('disconnect',namespace='/restaurant')
 def delivery_man_disconnect_handler():
 	print('restaurant disconnect')
+
+
