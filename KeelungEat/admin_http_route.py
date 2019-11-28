@@ -2,29 +2,14 @@ from flask import Flask , jsonify , request
 from mongoengine import *
 import json
 from bson import ObjectId
-from flask_cors import cross_origin
+#from flask_cors import cross_origin
+from . import app
+import KeelungEat.models
 
-app = Flask(__name__)
 
-app.config["MONGODB_DB"] = 'KEELUNG_EAT'
-connect(
-    host='mongodb+srv://EthanSu:Eason861208@cluster0-upq73.gcp.mongodb.net/KEELUNG_EAT?retryWrites=true&w=majority',
-    port=27017
-)
-
-class User(Document):
-  name = StringField(required=True)
-  email =  StringField()
-  password = StringField()
-  district = StringField()
-  address = StringField()
-  identity = StringField()
-  status = StringField()
-  tel = StringField()
-  meta = {'collection': 'User'}
 #----------------------------------------------------------
 @app.route('/User/View_Delivery' , methods = ['GET']) 
-@cross_origin()
+#@cross_origin()
 def view_all_delievery_man ():
  Users =  User.objects().all()
  output = []
@@ -36,7 +21,7 @@ def view_all_delievery_man ():
 
 
 @app.route('/User/View_User' , methods = ['GET']) 
-@cross_origin()
+#@cross_origin()
 def view_all_user ():
  Users =  User.objects().all()
  output = []
@@ -48,7 +33,7 @@ def view_all_user ():
  
  
 @app.route('/User/View_User_and_Delivery' , methods = ['GET']) 
-@cross_origin()
+#@cross_origin()
 def view_all_user_delievery ():
  Users =  User.objects().all()
  output = []
@@ -60,7 +45,7 @@ def view_all_user_delievery ():
 
 
 @app.route('/User/insert' , methods=['POST'] )
-@cross_origin()
+#@cross_origin()
 def create_delievery():
 
   data = request.json
@@ -70,7 +55,7 @@ def create_delievery():
 
 
 @app.route('/User/delete' , methods=['POST'])
-@cross_origin()
+#@cross_origin()
 def delete_delievery():
   
   data = request.json
@@ -81,7 +66,7 @@ def delete_delievery():
 
 
 @app.route('/User/modify' , methods = ['POST'])
-@cross_origin()
+#@cross_origin()
 def modify_delievery():
 
   data = request.json
@@ -98,7 +83,3 @@ def modify_delievery():
   
 
   return jsonify(True)
-
-if __name__ == "__main__":
-    app.run(debug=True , host='0.0.0.0')
-

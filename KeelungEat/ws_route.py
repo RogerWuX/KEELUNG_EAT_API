@@ -1,5 +1,5 @@
 
-from KeelungEat.models import Order
+import KeelungEat.models
 
 from flask import request
 import json
