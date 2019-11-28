@@ -5,6 +5,7 @@ import json
 from bson import ObjectId
 from flask_cors import cross_origin
 from flask_cors import CORS
+from . import app
 import KeelungEat.models
 
 @app.route('/search', methods=['GET'])
@@ -40,7 +41,7 @@ def get_all_stores():
 
 @app.route('/store/search', methods=['POST'])
 @cross_origin()
-def get_all_stores():
+def get_one_stores():
   data = request.json
   store = Store.objects(id = str(data['id'])).get()
   output = []
