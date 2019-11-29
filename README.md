@@ -1,6 +1,6 @@
 # KEELUNG_EAT_API
 
-pip -r requirements.txt
+pip install -r requirements.txt
 
 python run.py
 

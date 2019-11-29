@@ -1,3 +1,4 @@
+import KeelungEat.models
 from flask import Flask, jsonify, request
 from mongoengine import *
 import mongoengine as me
@@ -6,7 +7,6 @@ from bson import ObjectId
 from flask_cors import cross_origin
 from flask_cors import CORS
 from . import app
-import KeelungEat.models
 
 @app.route('/search', methods=['GET'])
 @cross_origin()
