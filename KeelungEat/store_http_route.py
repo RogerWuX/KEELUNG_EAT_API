@@ -3,13 +3,12 @@ from mongoengine import *
 import mongoengine as me
 import json
 from bson import ObjectId
-from flask_cors import cross_origin
-from flask_cors import CORS
+
 from . import app
 import KeelungEat.models
 
 @app.route('/search', methods=['GET'])
-@cross_origin()
+#@cross_origin()
 def search():
   """http://localhost:5000/search"""
   data = request.json
@@ -20,7 +19,7 @@ def search():
   return jsonify(output)
 
 @app.route('/user', methods=['GET'])
-@cross_origin()
+#@cross_origin()
 def get_all_users():
   """http://localhost:5000/user"""
   users = User.objects().all()
@@ -30,7 +29,7 @@ def get_all_users():
   return jsonify(output)
   
 @app.route('/store', methods=['GET'])
-@cross_origin()
+#@cross_origin()
 def get_all_stores():
   """http://localhost:5000/store"""
   stores = Store.objects().all()
@@ -40,7 +39,7 @@ def get_all_stores():
   return jsonify(output)
 
 @app.route('/store/search', methods=['POST'])
-@cross_origin()
+#@cross_origin()
 def get_one_stores():
   data = request.json
   store = Store.objects(id = str(data['id'])).get()
@@ -49,7 +48,7 @@ def get_one_stores():
   return jsonify(output)
 
 @app.route('/store/insert', methods=['POST']) 
-@cross_origin()
+#@cross_origin()
 def insert_store():
 	"""http://localhost:5000/store/insert?email=email&name=ntou&district=中正區&address=北寧路&tel=12345678&info=學校"""
 	data = request.json
@@ -68,7 +67,7 @@ def insert_store():
 	return jsonify(True)
 
 @app.route('/store/delete', methods=['POST'])
-@cross_origin()
+#@cross_origin()
 def delete_store():
 	"""http://localhost:5000/store/delete?id=id"""
 	data = request.json
@@ -76,7 +75,7 @@ def delete_store():
 	return jsonify(True)
 
 @app.route('/store/update', methods=['PUT'])
-@cross_origin()
+#@cross_origin()
 def update_store():
 	"""http://localhost:5000/store/update?store_id=id&name=ntou&district=中正區&address=北寧路&tel=12345678&info=學校"""
 	data = request.json
