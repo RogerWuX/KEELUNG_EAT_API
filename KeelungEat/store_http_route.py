@@ -4,8 +4,9 @@ from mongoengine import *
 import mongoengine as me
 import json
 from bson import ObjectId
-
 from . import app
+from .models import *
+
 
 @app.route('/search', methods=['GET'])
 #@cross_origin()
