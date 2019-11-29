@@ -5,7 +5,7 @@ import json
 from bson import ObjectId
 
 from . import app
-import KeelungEat.models
+from .models import *
 
 @app.route('/search', methods=['GET'])
 #@cross_origin()
