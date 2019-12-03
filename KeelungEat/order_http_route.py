@@ -1,4 +1,4 @@
-import KeelungEat.models
+from .models import *
 
 import json
 from flask import request,jsonify
