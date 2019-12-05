@@ -1,22 +1,21 @@
-from flask import Flask , jsonify , request
+from flask import Flask , jsonify , request, abort, g, make_response, Response
 from mongoengine import *
 import json
 from bson import ObjectId
 #from flask_cors import cross_origin
-from . import app
 from .models import *
-from flask_cors import cross_origin
-from flask_cors import CORS
-from passlib.apps import custom_app_context
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
 from flask_httpauth import HTTPBasicAuth
 import os
 
 #----------------------------------------------------------
+auth = HTTPBasicAuth()
+
 @app.route("/auth", methods=['GET'])
 @auth.login_required
 def index():
-    return jsonify('Hello, %s' % g.user.name)
+  output = []
+  output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel } )
+  return jsonify(output)
 
 @app.route('/register', methods=['POST'])
 def new_user():
