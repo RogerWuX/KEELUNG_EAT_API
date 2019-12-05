@@ -27,8 +27,7 @@ def order_post():
 	)
 	order.save()
 	order=dict(order.to_mongo())
-	for field in ['_id','recieve_time','store_id','consumer_id']:
-		order[field]=str(order[field])
+	Order.dict_to_string(order)
 	order_json=json.dumps(order)
 	socketio.emit('order_data',order_json,namespace='/admin',broadcast=True)
 	socketio.emit('order_data',order_json,namespace='/delivery_man',broadcast=True)
@@ -41,8 +40,7 @@ def current_order_delivery(delivery_id):
 	print('delivery current_order')
 	try:
 		current_order=Order.objects(delivery_id=delivery_id,delivery_state__in=['accepted','delivering']).exclude('delivery_id').as_pymongo().get()
-		for field in ['_id','recieve_time','consumer_id','store_id']:
-			current_order[field]=str(current_order[field])
+		Order.dict_to_string(current_order)
 		return jsonify(json.dumps(current_order))
 	except :
 		return jsonify({"message":'failed'})
@@ -54,8 +52,7 @@ def current_order_consumer(consumer_id):
 	print('consumer current_order')
 	try:
 		current_order=Order.objects(consumer_id=consumer_id,delivery_state__ne='finished').exclude('consumer_id').as_pymongo().get()
-		for field in ['_id','recieve_time','store_id','delivery_id']:
-				current_order[field]=str(current_order[field])
+		Order.dict_to_string(current_order)
 		return jsonify(json.dumps(current_order))
 	except:
 		return jsonify({"message":'failed'})

@@ -21,10 +21,7 @@ class Order(Document):
 			if state == Order.delivery_state_choice[i]:
 				return i;
 	@staticmethod
-	def to_string_dict(dict):
-		dict['_id']=str(dict['_id'])
-		dict['consumer_id']=str(dict['consumer_id'])
-		dict['delivery_id']=str(dict['delivery_id'])		
-		dict['store_id']=str(dict['store_id'])
-		dict['recieve_time']=str(dict['recieve_time'])
-		dict['delivery_time']=str(dict['recieve_time'])
+	def dict_to_string(dict):
+		for field in ['_id','recieve_time','delivery_time','store_id','consumer_id','delivery_id']:
+			if field in dict:
+				dict[field]=str(dict[field])

@@ -15,8 +15,7 @@ def admin_connect_handler():
 	order_dicts=Order.objects().as_pymongo()
 	order_dicts=sorted(order_dicts,key=lambda e :Order.delivery_state_key(e['delivery_state']))
 	for order_dict in order_dicts:
-		for field in ['_id','recieve_time','delivery_time','store_id','consumer_id','delivery_id']:
-			order_dict[field]=str(order_dict[field])
+		Order.dict_to_string(order_dict)
 	emit('order_data',json.dumps(order_dicts))
 
 @socketio.on('order_delete',namespace='/admin')
@@ -48,8 +47,7 @@ def delivery_man_connect_handler():
 	print('delivery_man connect')
 	order_dicts=list(Order.objects(delivery_state='pending').as_pymongo())
 	for order_dict in order_dicts:
-		for field in ['_id','recieve_time','delivery_time','store_id','consumer_id','delivery_id']:
-			order_dict[field]=str(order_dict[field])
+		Order.dict_to_string(order_dict)
 	emit('order_data',json.dumps(order_dicts))
 
 
@@ -74,8 +72,7 @@ def restaurant_connect_handler():
 	#no store_id
 	order_dicts=list(Order.objects(delivery_state__in=['pending','accepted']).as_pymongo())
 	for order_dict in order_dicts:
-		for field in ['_id','recieve_time','delivery_time','store_id','consumer_id','delivery_id']:
-			order_dict[field]=str(order_dict[field])
+		Order.dict_to_string(order_dict)
 	emit('order_data',json.dumps(order_dicts))
 	#join_room(room)
 
