@@ -31,7 +31,9 @@ def admin_order_delete_handler(order_id):
 @socketio.on('order_state_update',namespace='/admin')
 def admin_order_state_update_handler(request):
 	print('admin order_state_update')
-	if Order.objects(id=request['order_id']).update_one(set__delivery_state=request['delivery_state'],set__store_state=request['store_state'])==1:
+	if request['delivery_state'] not in Order.delivery_state_choice or request['store_state'] not in Order.store_state_choice:
+		emit('order_state_update',{'message':'format problem'})
+	if Order.objects(id=request['order_id']).update_one(set__delivery_state=request['delivery_state'],set__store_state=request['store_state'] )==1:
 		emit('order_state_update',{'message':'success'})
 	else:
 		emit('order_state_update',{'message':'failed'})
