@@ -1,5 +1,5 @@
 
-import KeelungEat.models
+from.models import *
 
 from flask import request
 import json

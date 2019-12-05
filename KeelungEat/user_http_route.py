@@ -5,13 +5,11 @@ from bson import ObjectId
 #from flask_cors import cross_origin
 from . import app
 from .models import *
-from flask_cors import cross_origin
-from flask_cors import CORS
 from passlib.apps import custom_app_context
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
 from flask_httpauth import HTTPBasicAuth
 import os
-
+auth = HTTPBasicAuth()
 #----------------------------------------------------------
 @app.route("/auth", methods=['GET'])
 @auth.login_required
