@@ -4,10 +4,74 @@ import json
 from bson import ObjectId
 #from flask_cors import cross_origin
 from . import app
-import KeelungEat.models
-
+from .models import *
+from flask_cors import cross_origin
+from flask_cors import CORS
+from passlib.apps import custom_app_context
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
+from flask_httpauth import HTTPBasicAuth
+import os
 
 #----------------------------------------------------------
+@app.route("/auth", methods=['GET'])
+@auth.login_required
+def index():
+    return jsonify('Hello, %s' % g.user.name)
+
+@app.route('/register', methods=['POST'])
+def new_user():
+    json_data = request.get_json()
+    name = json_data['name']
+    email = json_data['email']
+    password = json_data['password']
+    district = json_data['district']
+    address = json_data['address']
+    identity = json_data['identity']
+    status = json_data['status']
+    tel = json_data['tel']
+
+    if email is None or password is None:
+        abort(400)  # missing arguments
+    if User.objects(email=email).first() is not None:
+        abort(400)  # existing user
+    user = User(name=name, email=email, district=district, address=address, identity=identity, status=status, tel=tel)
+    user.hash_password(password)
+    user.save()
+    return jsonify({'name': user.name, 'password': user.password, 'district': user.district, 'address': user.address, 'identity': user.identity, 'status': user.status, 'tel': user.tel})
+
+@auth.verify_password
+def verify_password(email_or_token, password):
+    if request.path == "/login":
+        email_and_password_post = request.get_json()
+        if email_and_password_post.get('email') is not None:
+            email_or_token = email_and_password_post['email']
+        if email_and_password_post.get('password') is not None:
+            password = email_and_password_post['password']
+
+        user = User.objects(email=email_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    else:
+        """data = request.get_json()
+        token = data['token']"""
+        token=request.cookies.get('token')
+        user = User.verify_auth_token(token)
+        if not user:
+            return False
+    g.user = user
+    return True
+    
+@app.route('/login', methods=['POST'])
+@auth.login_required
+def get_auth_token():
+    token = g.user.generate_auth_token()
+    token = str(token, encoding='utf8')
+    print(str(g.user['id']))
+    response=make_response(token)  
+    response.set_cookie('token',token, max_age=600) 
+    return response
+
+#-----------------------------------------------------------
 @app.route('/User/View_Delivery' , methods = ['GET']) 
 #@cross_origin()
 def view_all_delievery_man ():
