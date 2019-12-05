@@ -20,7 +20,7 @@ def admin_connect_handler():
 	emit('order_data',json.dumps(order_dicts))
 
 @socketio.on('order_delete',namespace='/admin')
-def order_delete_handler(order_id):
+def admin_order_delete_handler(order_id):
 	print('admin order_delete')
 	if Order.objects(id=order_id).delete()==1 :
 		emit('order_delete',{'message':'success'})
@@ -29,7 +29,7 @@ def order_delete_handler(order_id):
 		
 
 @socketio.on('order_state_update',namespace='/admin')
-def order_state_update_handler(request):
+def admin_order_state_update_handler(request):
 	print('admin order_state_update')
 	if Order.objects(id=request['order_id']).update_one(set__delivery_state=request['delivery_state'],set__store_state=request['store_state'])==1:
 		emit('order_state_update',{'message':'success'})
@@ -52,7 +52,7 @@ def delivery_man_connect_handler():
 
 
 @socketio.on('order_accept',namespace='/delivery_man')
-def order_accept_handler(order_id):
+def delivery_man_order_accept_handler(order_id):
 	print('delivery_man order_accept')
 	#no delivery_man info
 	if Order.objects(id=order_id,delivery_state='pending').update_one(set__delivery_state='accepted')==1 :
@@ -67,7 +67,7 @@ def delivery_man_disconnect_handler():
 	
 	
 @socketio.on('connect',namespace='/restaurant')
-def delivery_man_connect_handler():
+def restaurant_connect_handler():
 	print('restaurant connect')
 	#no store_id
 	order_dicts=list(Order.objects(delivery_state__in=['pending','accepted']).as_pymongo())
@@ -79,7 +79,7 @@ def delivery_man_connect_handler():
 
 
 @socketio.on('order_confirm',namespace='/restaurant')
-def order_accept_handler(order_id):
+def restaurant_order_confirm_handler(order_id):
 	print('restaurant order_confirm')
 	#no delivery_man info
 	if Order.objects(id=order_id).update_one(set__store_state='confirmed')==1 :
@@ -89,7 +89,7 @@ def order_accept_handler(order_id):
 	
 
 @socketio.on('disconnect',namespace='/restaurant')
-def delivery_man_disconnect_handler():
+def restaurant_disconnect_handler():
 	print('restaurant disconnect')
 
 
