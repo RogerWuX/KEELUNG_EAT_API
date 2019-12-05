@@ -1,4 +1,8 @@
 from mongoengine import *
+from passlib.apps import custom_app_context
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
+from . import app
+
 class User(Document):
 	name = StringField(required=True)
 	email =  StringField()
