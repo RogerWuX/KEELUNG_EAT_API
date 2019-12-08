@@ -6,7 +6,9 @@ import json
 from bson import ObjectId
 from . import app
 from .models import *
+from flask_httpauth import HTTPBasicAuth
 
+auth = HTTPBasicAuth()
 
 @app.route('/search', methods=['GET'])
 #@cross_origin()
@@ -30,6 +32,7 @@ def get_all_users():
   return jsonify(output)
   
 @app.route('/store', methods=['GET'])
+@auth.login_required
 #@cross_origin()
 def get_all_stores():
   """http://localhost:5000/store"""

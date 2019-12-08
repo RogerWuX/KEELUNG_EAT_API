@@ -73,6 +73,7 @@ def get_auth_token():
 #-----------------------------------------------------------
 @app.route('/User/View_Delivery' , methods = ['GET']) 
 #@cross_origin()
+#@auth.login_required
 def view_all_delievery_man ():
  Users =  User.objects().all()
  output = []

@@ -5,6 +5,10 @@ from flask import request,jsonify
 
 from . import app,socketio
 
+from flask_httpauth import HTTPBasicAuth
+
+auth = HTTPBasicAuth()
+
 
 @app.route('/',methods=['get'])
 def test():
