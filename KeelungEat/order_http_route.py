@@ -18,6 +18,7 @@ def order_post():
 		delivery_id=None,
 		store_id=request.json.get('store_id'),
 		foods=request.json.get('foods'),
+		total_price=request.json.get('total_price'),
 		delivery_state='pending',
 		store_state='unconfirmed'
 	)

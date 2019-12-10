@@ -10,6 +10,7 @@ class Order(Document):
 	store_id=ObjectIdField()
 	delivery_id=ObjectIdField()
 	foods=ListField()
+	total_price=DecimalField()
 	delivery_state=StringField(choice=delivery_state_choice)	
 	store_state=StringField()
 	meta = {
