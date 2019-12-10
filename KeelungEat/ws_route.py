@@ -16,6 +16,7 @@ def admin_connect_handler():
 	order_dicts=sorted(order_dicts,key=lambda e :Order.delivery_state_key(e['delivery_state']))
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
+		order_dict['store_name']=Store.objects(id=order_dict['store_id']).only('name').first().name
 	emit('order_data',json.dumps(order_dicts))
 
 @socketio.on('order_delete',namespace='/admin')
@@ -48,6 +49,7 @@ def delivery_man_connect_handler():
 	order_dicts=list(Order.objects(delivery_state='pending').as_pymongo())
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
+		order_dict['store_name']=Store.objects(id=order_dict['store_id']).only('name').first().name
 	emit('order_data',json.dumps(order_dicts))
 
 
