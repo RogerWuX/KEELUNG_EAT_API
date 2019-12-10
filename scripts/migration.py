@@ -8,7 +8,7 @@ if sys.argv[1] == 'seed':
 	order_ids=Order.objects.insert(
 	[
 		Order(
-			recieve_time=datetime(2019,8,9,0,0),
+			receive_time=datetime(2019,8,9,0,0),
 			delivery_time=None,
 			district='中正區',address='北寧路2號',
 			consumer_id='5dc3c34ff1733b1e786c8389',

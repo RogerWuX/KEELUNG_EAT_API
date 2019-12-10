@@ -2,7 +2,7 @@ from mongoengine import *
 class Order(Document):
 	delivery_state_choice=['pending','accepted','delivering','finished']
 	store_state_choice=['unconfirmed','confirmed']
-	recieve_time=DateTimeField()
+	receive_time=DateTimeField()
 	delivery_time=DateTimeField()
 	district=StringField()
 	address=StringField()
@@ -22,6 +22,6 @@ class Order(Document):
 				return i;
 	@staticmethod
 	def dict_to_string(dict):
-		for field in ['_id','recieve_time','delivery_time','store_id','consumer_id','delivery_id']:
+		for field in ['_id','receive_time','delivery_time','store_id','consumer_id','delivery_id']:
 			if field in dict:
 				dict[field]=str(dict[field])

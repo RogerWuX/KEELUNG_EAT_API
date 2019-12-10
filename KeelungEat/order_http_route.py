@@ -1,20 +1,16 @@
 from .models import *
-
 import json
 from flask import request,jsonify
-
 from . import app,socketio
-
 
 @app.route('/',methods=['get'])
 def test():
 	return jsonify({'message':'hello_world'})
-
 @app.route('/order',methods=['post'])
 def order_post():
 	print('order_post')
 	order=Order(
-		recieve_time=request.json.get('recieve_time'),
+		receive_time=request.json.get('receive_time'),
 		delivery_time=None,
 		district=request.json.get('district'),
 		address=request.json.get('address'),
