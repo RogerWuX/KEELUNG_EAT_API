@@ -1,6 +1,6 @@
 from .models import *
 import json
-from flask import request,jsonify,g
+from flask import request,jsonify,g,session
 from . import app,socketio
 from datetime import datetime
 
@@ -16,6 +16,7 @@ def test():
 @auth.login_required
 def order_post():
 	print('order_post')
+	print(session)
 	order=Order(
 		receive_time=datetime.strptime(request.json.get('receive_time'),"%H:%M:%S"),#,
 		delivery_time=None,

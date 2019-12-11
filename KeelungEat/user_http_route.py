@@ -1,4 +1,4 @@
-from flask import Flask , jsonify , request, abort, g, make_response, Response
+from flask import Flask , jsonify , request, abort, g, make_response, Response,session
 from mongoengine import *
 import json
 from bson import ObjectId
@@ -58,9 +58,11 @@ def verify_password(email_or_token, password):
 def get_auth_token():
     token = g.user.generate_auth_token()
     token = str(token, encoding='utf8')
+    User.objects(id = str(g.user.id)).update(token = token)
     print(str(g.user['id']))
     response=make_response(token)  
     response.set_cookie('token',token, max_age=600) 
+    session['token']=token 
     return response
 
 #-----------------------------------------------------------

@@ -12,6 +12,7 @@ class User(Document):
 	identity = StringField()
 	status = StringField()
 	tel = StringField()
+	token = StringField()
 	meta = {'collection': 'User'}
 
 	# 密碼加密

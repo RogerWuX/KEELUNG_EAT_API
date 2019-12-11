@@ -67,6 +67,7 @@ var socketTestInfos=[
 {
 	namespace:'admin',
 	connect_button:'管理員訂單管理_連接',
+	query_parameter:{token:'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3NjA3MzM5NiwiZXhwIjoxNTc2MDczOTk2fQ.eyJpZCI6IjVkZGJkZDEyNWI0NDIzNzBkNDZhMzZlZSJ9.9wGEHIF2Ax915QuCFY7ogV2IjqvcW--pTl1zLDfLDpKiAnH59nEFGupaGEvSLJWDox1iOXeaX-wp4_UNWUo4OA'},
 	event_handlers:[
 	{
 		event_name:'connect',
@@ -108,6 +109,7 @@ var socketTestInfos=[
 {
 	namespace:'delivery_man',
 	connect_button:'外送員待接受訂單檢視_連接',
+	query_parameter:{token:'vvvvvvv'},
 	event_handlers:[
 	{
 		event_name:'connect',
@@ -135,6 +137,7 @@ var socketTestInfos=[
 {
 	namespace:'restaurant',
 	connect_button:'餐廳待處理訂單檢視_連接',
+	query_parameter:{token:'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3NjA3NDE0MCwiZXhwIjoxNTc2MDc0NzQwfQ.eyJpZCI6IjVkZGJkZDEyNWI0NDIzNzBkNDZhMzZlZSJ9.f9HxBeCCbbCUIti_YGLM2KLt23z-JxeslE15htj7vidVWWjduYX6XcVMTFoPk3HOcRNuRj-zK5dOkhLtgKKXSg'},
 	event_handlers:[
 	{
 		event_name:'connect',
@@ -209,7 +212,7 @@ function socketConnect()
 {
 	var index=this.id.split('_')[1]
 	console.log('http://localhost:5000/'+socketTestInfos[index].namespace)
-	var socket = io('http://localhost:5000/'+socketTestInfos[index].namespace);
+	var socket = io('http://localhost:5000/'+socketTestInfos[index].namespace,{query:socketTestInfos[index].query_parameter});
 	var event_handlers=socketTestInfos[index].event_handlers
 	for(var i=0;i<event_handlers.length;++i)
 	{		
