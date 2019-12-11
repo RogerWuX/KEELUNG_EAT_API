@@ -7,11 +7,14 @@ import json
 from flask_socketio import send,emit,join_room,leave_room
 
 from . import socketio
+from.auth import auth
+
 
 
 @socketio.on('connect',namespace='/admin')
 def admin_connect_handler():
 	print('admin connect')
+	print(request.cookies['token'])
 	order_dicts=Order.objects().as_pymongo()
 	order_dicts=sorted(order_dicts,key=lambda e :Order.delivery_state_key(e['delivery_state']))
 	for order_dict in order_dicts:
@@ -56,8 +59,7 @@ def delivery_man_connect_handler():
 @socketio.on('order_accept',namespace='/delivery_man')
 def delivery_man_order_accept_handler(order_id):
 	print('delivery_man order_accept')
-	#no delivery_man info
-	if Order.objects(id=order_id,delivery_state='pending').update_one(set__delivery_state='accepted')==1 :
+	if Order.objects(id=order_id,delivery_state='pending').update_one(set__delivery_state='accepted',set__delivery_id=g.user.id)==1 :
 		emit('order_accept','success')
 	else:
 		emit('order_accept','failed')
@@ -71,6 +73,7 @@ def delivery_man_disconnect_handler():
 @socketio.on('connect',namespace='/restaurant')
 def restaurant_connect_handler():
 	print('restaurant connect')
+	print(current_user)
 	order_dicts=list(Order.objects(delivery_state__in=['pending','accepted'],owner_id=g.user.id).as_pymongo())
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
@@ -80,8 +83,7 @@ def restaurant_connect_handler():
 
 @socketio.on('order_confirm',namespace='/restaurant')
 def restaurant_order_confirm_handler(order_id):
-	print('restaurant order_confirm')
-	
+	print('restaurant order_confirm')	
 	if Order.objects(id=order_id).update_one(set__store_state='confirmed')==1 :
 		emit('order_confirm','success')
 	else:

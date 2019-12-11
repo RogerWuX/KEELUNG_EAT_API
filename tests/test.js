@@ -20,6 +20,15 @@ function createButton(buttonName,id,onclickFunctionName)
 
 var ajaxTestInfos=[
 {
+	buttonName:"登入",
+	url:'http://127.0.0.1:5000/login',
+	type:"POST",
+	data:{
+		email: "wind@mail.com",
+		password: "wind"	
+	}
+},
+{
 	buttonName:"新增訂單",
 	url:'http://127.0.0.1:5000/order',
 	type:"POST",

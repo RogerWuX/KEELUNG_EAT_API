@@ -1,13 +1,19 @@
 from .models import *
 import json
-from flask import request,jsonify
+from flask import request,jsonify,g
 from . import app,socketio
-import datetime
+from datetime import datetime
+
+from.auth import auth
 
 @app.route('/',methods=['get'])
 def test():
 	return jsonify({'message':'hello_world'})
+	
+
+
 @app.route('/order',methods=['post'])
+@auth.login_required
 def order_post():
 	print('order_post')
 	order=Order(
@@ -42,7 +48,17 @@ def current_order_delivery(delivery_id):
 		return jsonify(json.dumps(current_order))
 	except :
 		return jsonify({"message":'failed'})
-	
+
+@app.route('/order/<order_id>/update_state',methods=['post'])
+def order_state_update(order_id):
+	print('order state update')
+	order_doc=Order.objects(id=order_id).first()	
+	for index in range(0,len(Order.delivery_state_choice)):
+		if Order.delivery_state_choice[index]==order_doc.delivery_state and index < len(Order.delivery_state_choice)-1:
+			order_doc.delivery_state=Order.delivery_state_choice[index+1]
+			order_doc.save()
+			return jsonify({"message":'success'})
+	return jsonify({"message":'failed'})
 	
 
 @app.route('/consumer/<consumer_id>/current_orders',methods=['get'])
