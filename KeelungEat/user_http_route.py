@@ -13,14 +13,11 @@ auth = HTTPBasicAuth()
 @app.route("/auth", methods=['GET'])
 @auth.login_required
 def index():
+  if g is None:
+    return("false")
   output = []
   output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel } )
   return jsonify(output)
-
-@app.route("/auth_check", methods=['GET'])
-@auth.login_required
-def index():
-  return jsonify(true)
 
 @app.route('/register', methods=['POST'])
 def new_user():
