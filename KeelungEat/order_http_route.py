@@ -18,7 +18,6 @@ def test():
 @app.route('/order',methods=['post'])
 @auth.login_required
 def order_post():
-	print('order_post')
 	order=Order(
 		recieve_time=request.json.get('recieve_time'),
 		delivery_time=None,
