@@ -1,7 +1,7 @@
 from .models import *
 
 import json
-from flask import request,jsonify
+from flask import request,jsonify,g
 
 from . import app,socketio
 

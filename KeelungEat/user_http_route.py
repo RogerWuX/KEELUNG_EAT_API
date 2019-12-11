@@ -6,18 +6,8 @@ from bson import ObjectId
 from .models import *
 from flask_httpauth import HTTPBasicAuth
 import os
-
 #----------------------------------------------------------
 auth = HTTPBasicAuth()
-
-@app.route("/auth", methods=['GET'])
-@auth.login_required
-def index():
-  if g.user is None:
-    return jsonify(False)
-  output = []
-  output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel } )
-  return jsonify(output)
 
 @app.route('/register', methods=['POST'])
 def new_user():
@@ -58,7 +48,6 @@ def verify_password(email_or_token, password):
         token=request.cookies.get('token')
         user = User.verify_auth_token(token)
         if not user:
-            g.user = None
             return False
     g.user = user
     return True
@@ -74,6 +63,21 @@ def get_auth_token():
     return response
 
 #-----------------------------------------------------------
+@app.route('/check',methods=['get'])
+def check():
+    token=request.cookies.get('token')
+    if token is None:
+        return jsonify(False)
+    else:
+        return jsonify(True)
+
+@app.route("/auth", methods=['GET'])
+@auth.login_required
+def auth():
+    output = []
+    output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel } )
+    return jsonify(output)
+
 @app.route('/User/View_Delivery' , methods = ['GET']) 
 #@cross_origin()
 #@auth.login_required
