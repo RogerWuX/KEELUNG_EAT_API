@@ -130,16 +130,20 @@ def distance():
 					'&key=' + api_key) 
 	output = r.json() 
 
-	print('helloworld')
 	rows = output['rows']
 	elements = rows[0]
 	ele = elements['elements']
 	info = ele[0]
-	distance = info['distance']
-	duration = info['duration']
+	distance_info = info['distance']
+	duration_info = info['duration']
+	distance = distance_info['text']
+	duration = duration_info['text']
+	if distance_info['value'] < 5000:
+		fee = 30
+	else:
+		fee = 50
 
+	arr = []
+	arr.append({'distance' : distance, 'duration' : duration, 'fee' : fee})
 
-	print(distance)
-	print(duration)
-
-	return (output)
+	return jsonify(arr)
