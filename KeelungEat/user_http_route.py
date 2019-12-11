@@ -4,10 +4,11 @@ import json
 from bson import ObjectId
 #from flask_cors import cross_origin
 from .models import *
-from flask_httpauth import HTTPBasicAuth
+#from flask_httpauth import HTTPBasicAuth
 import os
+from .auth import *
 #----------------------------------------------------------
-auth = HTTPBasicAuth()
+#auth = HTTPBasicAuth()
 
 @app.route('/register', methods=['POST'])
 def new_user():

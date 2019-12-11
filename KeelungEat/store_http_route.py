@@ -6,9 +6,10 @@ import json
 from bson import ObjectId
 from . import app
 from .models import *
-from flask_httpauth import HTTPBasicAuth
+#from flask_httpauth import HTTPBasicAuth
+from .auth import *
 
-auth = HTTPBasicAuth()
+#auth = HTTPBasicAuth()
 
 @app.route('/search', methods=['POST'])
 #@cross_origin()

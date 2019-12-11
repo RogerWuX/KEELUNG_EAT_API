@@ -5,9 +5,10 @@ from flask import request,jsonify,g
 
 from . import app,socketio
 
-from flask_httpauth import HTTPBasicAuth
+#from flask_httpauth import HTTPBasicAuth
 
-auth = HTTPBasicAuth()
+#auth = HTTPBasicAuth()
+from .auth import *
 
 
 @app.route('/',methods=['get'])
@@ -15,6 +16,7 @@ def test():
 	return jsonify({'message':'hello_world'})
 
 @app.route('/order',methods=['post'])
+@auth.login_required
 def order_post():
 	print('order_post')
 	order=Order(
