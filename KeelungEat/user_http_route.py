@@ -17,6 +17,11 @@ def index():
   output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel } )
   return jsonify(output)
 
+@app.route("/auth_check", methods=['GET'])
+@auth.login_required
+def index():
+  return jsonify(true)
+
 @app.route('/register', methods=['POST'])
 def new_user():
     json_data = request.get_json()
@@ -33,7 +38,7 @@ def new_user():
         abort(400)  # missing arguments
     if User.objects(email=email).first() is not None:
         abort(400)  # existing user
-    user = User(name=name, email=email, district=district, address=address, identity=identity, status=status, tel=tel)
+    user = User(name=name, email=email, district=district, address=address, identity=0, status=status, tel=tel)
     user.hash_password(password)
     user.save()
     return jsonify({'name': user.name, 'password': user.password, 'district': user.district, 'address': user.address, 'identity': user.identity, 'status': user.status, 'tel': user.tel})
