@@ -13,8 +13,8 @@ auth = HTTPBasicAuth()
 @app.route("/auth", methods=['GET'])
 @auth.login_required
 def index():
-  if g is None:
-    return("false")
+  if g.user is None:
+    return jsonify(False)
   output = []
   output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel } )
   return jsonify(output)
@@ -58,6 +58,7 @@ def verify_password(email_or_token, password):
         token=request.cookies.get('token')
         user = User.verify_auth_token(token)
         if not user:
+            g.user = None
             return False
     g.user = user
     return True
