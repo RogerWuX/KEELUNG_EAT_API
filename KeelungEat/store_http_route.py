@@ -8,6 +8,7 @@ from . import app
 from .models import *
 #from flask_httpauth import HTTPBasicAuth
 from .auth import *
+import requests
 
 #auth = HTTPBasicAuth()
 
@@ -115,3 +116,17 @@ def update_store():
 		store.save()
 
 	return jsonify(True)
+
+@app.route('/distance', methods=['GET'])
+def distance():
+	api_key ='AIzaSyB2qSt6SBvkcbnaKYLSlpuTI9RNYtR9NSg'
+	url ='https://maps.googleapis.com/maps/api/distancematrix/json?'
+	json_data = request.get_json()
+	source = json_data['source']
+	dest = json_data['dest']
+
+	r = requests.get(url + 'origins=' + source +
+					'&destinations=' + dest +
+					'&key=' + api_key) 
+	output = r.json() 
+	return (output)
