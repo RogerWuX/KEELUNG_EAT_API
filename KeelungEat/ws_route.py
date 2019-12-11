@@ -1,7 +1,7 @@
 
 from.models import *
 
-from flask import request
+from flask import request,g
 import json
 
 from flask_socketio import send,emit,join_room,leave_room
@@ -71,18 +71,17 @@ def delivery_man_disconnect_handler():
 @socketio.on('connect',namespace='/restaurant')
 def restaurant_connect_handler():
 	print('restaurant connect')
-	#no store_id
-	order_dicts=list(Order.objects(delivery_state__in=['pending','accepted']).as_pymongo())
+	order_dicts=list(Order.objects(delivery_state__in=['pending','accepted'],owner_id=g.user.id).as_pymongo())
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
 	emit('order_data',json.dumps(order_dicts))
-	#join_room(room)
+	join_room(Store.objects(owner_id=g.user.id).only('id').first().id)
 
 
 @socketio.on('order_confirm',namespace='/restaurant')
 def restaurant_order_confirm_handler(order_id):
 	print('restaurant order_confirm')
-	#no delivery_man info
+	
 	if Order.objects(id=order_id).update_one(set__store_state='confirmed')==1 :
 		emit('order_confirm','success')
 	else:

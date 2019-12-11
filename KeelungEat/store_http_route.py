@@ -8,7 +8,7 @@ from . import app
 from .models import *
 
 
-@app.route('/search', methods=['GET'])
+@app.route('/search', methods=['POST'])
 #@cross_origin()
 def search():
   """http://localhost:5000/search"""

@@ -2,6 +2,7 @@ from .models import *
 import json
 from flask import request,jsonify
 from . import app,socketio
+import datetime
 
 @app.route('/',methods=['get'])
 def test():
@@ -10,7 +11,7 @@ def test():
 def order_post():
 	print('order_post')
 	order=Order(
-		receive_time=request.json.get('receive_time'),
+		receive_time=datetime.strptime(request.json.get('receive_time'),"%H:%M:%S"),#,
 		delivery_time=None,
 		district=request.json.get('district'),
 		address=request.json.get('address'),
@@ -47,10 +48,11 @@ def current_order_delivery(delivery_id):
 @app.route('/consumer/<consumer_id>/current_orders',methods=['get'])
 def current_order_consumer(consumer_id):
 	print('consumer current_order')
-	try:
-		current_order=Order.objects(consumer_id=consumer_id,delivery_state__ne='finished').exclude('consumer_id').as_pymongo().get()
-		Order.dict_to_string(current_order)
-		return jsonify(json.dumps(current_order))
-	except:
-		return jsonify({"message":'failed'})
+	#try:
+	current_order_dicts=list(Order.objects(consumer_id=consumer_id,delivery_state__ne='finished').exclude('consumer_id').as_pymongo())
+	for order_dict in current_order_dicts:
+		Order.dict_to_string(order_dict)
+	return jsonify(json.dumps(current_order_dicts))
+	#except:
+	#	return jsonify({"message":'failed'})
 	
