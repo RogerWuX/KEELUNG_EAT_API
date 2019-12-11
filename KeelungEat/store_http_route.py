@@ -34,7 +34,7 @@ def get_all_users():
   return jsonify(output)
   
 @app.route('/store', methods=['GET'])
-@auth.login_required
+#@auth.login_required
 #@cross_origin()
 def get_all_stores():
   """http://localhost:5000/store"""
@@ -129,4 +129,17 @@ def distance():
 					'&destinations=' + dest +
 					'&key=' + api_key) 
 	output = r.json() 
+
+	print('helloworld')
+	rows = output['rows']
+	elements = rows[0]
+	ele = elements['elements']
+	info = ele[0]
+	distance = info['distance']
+	duration = info['duration']
+
+
+	print(distance)
+	print(duration)
+
 	return (output)
