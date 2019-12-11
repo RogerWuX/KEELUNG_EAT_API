@@ -39,7 +39,7 @@ var ajaxTestInfos=[
 	url:'http://127.0.0.1:5000/login',
 	type:"POST",
 	data:{
-		email: "cc@gmail.com",
+		email: "gg@gmail.com",
 		password: "aa"	
 	}
 },
@@ -82,7 +82,7 @@ var socketTestInfos=[
 {
 	namespace:'admin',
 	connect_button:'管理員訂單管理_連接',
-	query_parameter:{token:'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3NjA3OTM3OCwiZXhwIjoxNTc2MDc5OTc4fQ.eyJpZCI6IjVkZjEwZmVlNGI4ODZjNzE0NGEzMTM2OCJ9.WnIZDTpLIjcOThshafKDkUEH5mKMLEJXdGGSmmRW3S5oCMIBynZvnpTbyBkqrzduQJlX6DteEZIw5viL4giGww'},
+	query_parameter:{token:'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3NjA4NzQwMSwiZXhwIjoxNTc2MDg4MDAxfQ.eyJpZCI6IjVkZjEwZmVlNGI4ODZjNzE0NGEzMTM2OCJ9.59t5Cshdyrh5pGvbHRBa66OCtiJb4kKZqtTVGCMITMeMDjdVQltBn7CZfGLM9-d1md97EMyVPgObNxg-8gAnRg'},
 	event_handlers:[
 	{
 		event_name:'connect',

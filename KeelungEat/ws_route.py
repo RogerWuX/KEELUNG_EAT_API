@@ -14,11 +14,11 @@ from.auth import auth
 @socketio.on('connect',namespace='/admin')
 def admin_connect_handler():
 	print('admin connect')
-	print(request.args.get('token'))
 	user=User.objects(token=request.args.get('token')).first()
-	print(user)	
+	print(user)
 	if user==None:
 		disconnect()
+		return
 	session['user']=user
 	order_dicts=Order.objects().as_pymongo()
 	if order_dicts==None:
@@ -26,17 +26,29 @@ def admin_connect_handler():
 	order_dicts=sorted(order_dicts,key=lambda e :Order.delivery_state_key(e['delivery_state']))
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
-		order_dict['store_name']=Store.objects(id=order_dict['store_id']).only('name').first().name
+		order_store=Store.objects(id=order_dict['store_id']).first()
+		order_dict['store_name']=order_store.name
+		for food in order_dict['foods']:
+			for food_info in order_store.foods:
+				if food_info['id'] == food['food_id'] :
+					food['name']=food_info['name']
+					
 	emit('order_data',json.dumps(order_dicts))
 
 @socketio.on('order_delete',namespace='/admin')
 def admin_order_delete_handler(order_id):
 	print('admin order_delete')
-	print(session['user'])
 	if Order.objects(id=order_id).delete()==1 :
 		emit('order_delete',{'message':'success'})
 	else:
 		emit('order_delete',{'message':'failed'})
+	order_dicts=Order.objects().as_pymongo()
+	if order_dicts==None:
+		return
+	for order_dict in order_dicts:
+		Order.dict_to_string(order_dict)
+		order_dict['store_name']=Store.objects(id=order_dict['store_id']).only('name').first().name
+		emit('order_data',json.dumps(order_dicts))
 		
 
 @socketio.on('order_state_update',namespace='/admin')
@@ -60,13 +72,19 @@ def delivery_man_connect_handler():
 	user=User.objects(token=request.args.get('token')).first()
 	if user==None :
 		disconnect()
+		return
 	session['user']=user
 	order_dicts=list(Order.objects(delivery_state='pending').as_pymongo())
 	if order_dicts==None:
 		return
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
-		order_dict['store_name']=Store.objects(id=order_dict['store_id']).only('name').first().name
+		order_store=Store.objects(id=order_dict['store_id']).first()
+		order_dict['store_name']=order_store.name
+		for food in order_dict['foods']:
+			for food_info in order_store.foods:
+				if food_info['id'] == food['food_id'] :
+					food['name']=food_info['name']
 	emit('order_data',json.dumps(order_dicts))
 
 
@@ -89,12 +107,19 @@ def restaurant_connect_handler():
 	user=User.objects(token=request.args.get('token')).first()
 	if user==None :
 		disconnect()
-	session['store']=Store.objects(owner_id=user.id).first()
+		return
+	session['store']=Store.objects(owner_id=str(user.id)).first()
+	
 	order_dicts=list(Order.objects(store_id=session['store'].id,delivery_state__in=['pending','accepted']).as_pymongo())
 	if order_dicts==None:
 		return
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
+		order_store=Store.objects(id=order_dict['store_id']).first()
+		for food in order_dict['foods']:
+			for food_info in order_store.foods:
+				if food_info['id'] == food['food_id'] :
+					food['name']=food_info['name']
 	emit('order_data',json.dumps(order_dicts))
 	join_room(session['store'].id)
 

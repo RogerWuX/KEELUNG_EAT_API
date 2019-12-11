@@ -16,7 +16,8 @@ def test():
 @auth.login_required
 def order_post():
 	print('order_post')
-	print(session)
+	print(request.json.get('foods'))
+	return
 	order=Order(
 		receive_time=datetime.strptime(request.json.get('receive_time'),"%H:%M:%S"),#,
 		delivery_time=None,
