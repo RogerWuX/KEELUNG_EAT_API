@@ -20,12 +20,27 @@ function createButton(buttonName,id,onclickFunctionName)
 
 var ajaxTestInfos=[
 {
+	buttonName:"註冊",
+	url:'http://127.0.0.1:5000/register',
+	type:"POST",
+	data:{
+	  name: "GG",
+	  email: "gg@gmail.com",
+	  password: "ee",
+	  district: "中正區",
+	  address: "北寧路2號",
+	  identity: "0",
+	  status:"0",
+	  tel: "0955334119"
+	}
+},
+{
 	buttonName:"登入",
 	url:'http://127.0.0.1:5000/login',
 	type:"POST",
 	data:{
-		email: "wind@mail.com",
-		password: "wind"	
+		email: "cc@gmail.com",
+		password: "aa"	
 	}
 },
 {
@@ -67,7 +82,7 @@ var socketTestInfos=[
 {
 	namespace:'admin',
 	connect_button:'管理員訂單管理_連接',
-	query_parameter:{token:'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3NjA3MzM5NiwiZXhwIjoxNTc2MDczOTk2fQ.eyJpZCI6IjVkZGJkZDEyNWI0NDIzNzBkNDZhMzZlZSJ9.9wGEHIF2Ax915QuCFY7ogV2IjqvcW--pTl1zLDfLDpKiAnH59nEFGupaGEvSLJWDox1iOXeaX-wp4_UNWUo4OA'},
+	query_parameter:{token:'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3NjA3OTM3OCwiZXhwIjoxNTc2MDc5OTc4fQ.eyJpZCI6IjVkZjEwZmVlNGI4ODZjNzE0NGEzMTM2OCJ9.WnIZDTpLIjcOThshafKDkUEH5mKMLEJXdGGSmmRW3S5oCMIBynZvnpTbyBkqrzduQJlX6DteEZIw5viL4giGww'},
 	event_handlers:[
 	{
 		event_name:'connect',

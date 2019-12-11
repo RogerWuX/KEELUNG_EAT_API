@@ -14,10 +14,12 @@ from.auth import auth
 @socketio.on('connect',namespace='/admin')
 def admin_connect_handler():
 	print('admin connect')
+	print(request.args.get('token'))
 	user=User.objects(token=request.args.get('token')).first()
-	if user==None :
+	print(user)	
+	if user==None:
 		disconnect()
-	g.user=user
+	session['user']=user
 	order_dicts=Order.objects().as_pymongo()
 	if order_dicts==None:
 		return
@@ -30,6 +32,7 @@ def admin_connect_handler():
 @socketio.on('order_delete',namespace='/admin')
 def admin_order_delete_handler(order_id):
 	print('admin order_delete')
+	print(session['user'])
 	if Order.objects(id=order_id).delete()==1 :
 		emit('order_delete',{'message':'success'})
 	else:
@@ -57,7 +60,7 @@ def delivery_man_connect_handler():
 	user=User.objects(token=request.args.get('token')).first()
 	if user==None :
 		disconnect()
-	g.user=user
+	session['user']=user
 	order_dicts=list(Order.objects(delivery_state='pending').as_pymongo())
 	if order_dicts==None:
 		return
@@ -70,7 +73,7 @@ def delivery_man_connect_handler():
 @socketio.on('order_accept',namespace='/delivery_man')
 def delivery_man_order_accept_handler(order_id):
 	print('delivery_man order_accept')
-	if Order.objects(id=order_id,delivery_state='pending').update_one(set__delivery_state='accepted',set__delivery_id=g.user.id)==1 :
+	if Order.objects(id=order_id,delivery_state='pending').update_one(set__delivery_state='accepted',set__delivery_id=session['user'].id)==1 :
 		emit('order_accept','success')
 	else:
 		emit('order_accept','failed')
@@ -86,20 +89,20 @@ def restaurant_connect_handler():
 	user=User.objects(token=request.args.get('token')).first()
 	if user==None :
 		disconnect()
-	g.store=Store.objects(owner_id=user.id).first()
-	order_dicts=list(Order.objects(store_id=g.store.id,delivery_state__in=['pending','accepted']).as_pymongo())
+	session['store']=Store.objects(owner_id=user.id).first()
+	order_dicts=list(Order.objects(store_id=session['store'].id,delivery_state__in=['pending','accepted']).as_pymongo())
 	if order_dicts==None:
 		return
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
 	emit('order_data',json.dumps(order_dicts))
-	join_room(g.store.id)
+	join_room(session['store'].id)
 
 
 @socketio.on('order_confirm',namespace='/restaurant')
 def restaurant_order_confirm_handler(order_id):
 	print('restaurant order_confirm')	
-	if Order.objects(id=order_id,store_id=g.store.id).update_one(set__store_state='confirmed')==1 :
+	if Order.objects(id=order_id,store_id=session['store'].id).update_one(set__store_state='confirmed')==1 :
 		emit('order_confirm','success')
 	else:
 		emit('order_confirm','failed')
