@@ -17,9 +17,8 @@ def test():
 def order_post():
 	print('order_post')
 	print(request.json.get('foods'))
-	return
 	order=Order(
-		receive_time=datetime.strptime(request.json.get('receive_time'),"%H:%M:%S"),#,
+		receive_time=datetime.strptime(request.json.get('receive_time'),"%Y-%m-%d %H:%M:%S"),#,
 		delivery_time=None,
 		district=request.json.get('district'),
 		address=request.json.get('address'),
