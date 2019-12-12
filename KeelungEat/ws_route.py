@@ -16,7 +16,7 @@ def admin_connect_handler():
 	print('admin connect')
 	user=User.objects(token=request.args.get('token')).first()
 	print(user)
-	if user==None:
+	if user==None or user.identity!='4':
 		disconnect()
 		return
 	session['user']=user
@@ -70,7 +70,7 @@ def admin_disconnect_handler():
 def delivery_man_connect_handler():
 	print('delivery_man connect')
 	user=User.objects(token=request.args.get('token')).first()
-	if user==None :
+	if user==None  or user.identity!='1':
 		disconnect()
 		return
 	session['user']=user
@@ -105,7 +105,7 @@ def delivery_man_disconnect_handler():
 def restaurant_connect_handler():
 	print('restaurant connect')
 	user=User.objects(token=request.args.get('token')).first()
-	if user==None :
+	if user==None or user.identity!='2':
 		disconnect()
 		return
 	session['store']=Store.objects(owner_id=str(user.id)).first()
