@@ -6,9 +6,13 @@ import json
 from bson import ObjectId
 from . import app
 from .models import *
+#from flask_httpauth import HTTPBasicAuth
+from .auth import *
+import requests
 
+#auth = HTTPBasicAuth()
 
-@app.route('/search', methods=['GET'])
+@app.route('/search', methods=['POST'])
 #@cross_origin()
 def search():
   """http://localhost:5000/search"""
@@ -30,6 +34,7 @@ def get_all_users():
   return jsonify(output)
   
 @app.route('/store', methods=['GET'])
+#@auth.login_required
 #@cross_origin()
 def get_all_stores():
   """http://localhost:5000/store"""
@@ -111,3 +116,34 @@ def update_store():
 		store.save()
 
 	return jsonify(True)
+
+@app.route('/distance', methods=['GET'])
+def distance():
+	api_key ='AIzaSyB2qSt6SBvkcbnaKYLSlpuTI9RNYtR9NSg'
+	url ='https://maps.googleapis.com/maps/api/distancematrix/json?'
+	json_data = request.get_json()
+	source = json_data['source']
+	dest = json_data['dest']
+
+	r = requests.get(url + 'origins=' + source +
+					'&destinations=' + dest +
+					'&key=' + api_key) 
+	output = r.json() 
+
+	rows = output['rows']
+	elements = rows[0]
+	ele = elements['elements']
+	info = ele[0]
+	distance_info = info['distance']
+	duration_info = info['duration']
+	distance = distance_info['text']
+	duration = duration_info['text']
+	if distance_info['value'] < 5000:
+		fee = 30
+	else:
+		fee = 50
+
+	arr = []
+	arr.append({'distance' : distance, 'duration' : duration, 'fee' : fee})
+
+	return jsonify(arr)

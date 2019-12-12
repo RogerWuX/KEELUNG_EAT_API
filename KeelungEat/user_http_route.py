@@ -4,18 +4,11 @@ import json
 from bson import ObjectId
 #from flask_cors import cross_origin
 from .models import *
-from flask_httpauth import HTTPBasicAuth
+#from flask_httpauth import HTTPBasicAuth
 import os
-
+from .auth import *
 #----------------------------------------------------------
-auth = HTTPBasicAuth()
-
-@app.route("/auth", methods=['GET'])
-@auth.login_required
-def index():
-  output = []
-  output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel } )
-  return jsonify(output)
+#auth = HTTPBasicAuth()
 
 @app.route('/register', methods=['POST'])
 def new_user():
@@ -33,7 +26,7 @@ def new_user():
         abort(400)  # missing arguments
     if User.objects(email=email).first() is not None:
         abort(400)  # existing user
-    user = User(name=name, email=email, district=district, address=address, identity=identity, status=status, tel=tel)
+    user = User(name=name, email=email, district=district, address=address, identity='0', status=status, tel=tel)
     user.hash_password(password)
     user.save()
     return jsonify({'name': user.name, 'password': user.password, 'district': user.district, 'address': user.address, 'identity': user.identity, 'status': user.status, 'tel': user.tel})
@@ -65,14 +58,33 @@ def verify_password(email_or_token, password):
 def get_auth_token():
     token = g.user.generate_auth_token()
     token = str(token, encoding='utf8')
+    User.objects(id = str(g.user.id)).update(
+      token = token
+    )
     print(str(g.user['id']))
     response=make_response(token)  
     response.set_cookie('token',token, max_age=600) 
     return response
 
 #-----------------------------------------------------------
+@app.route('/check',methods=['get'])
+def check():
+    token=request.cookies.get('token')
+    if token is None:
+        return jsonify(False)
+    else:
+        return jsonify(True)
+
+@app.route("/auth", methods=['GET'])
+@auth.login_required
+def auth():
+    output = []
+    output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel, 'token': g.user.token} )
+    return jsonify(output)
+
 @app.route('/User/View_Delivery' , methods = ['GET']) 
 #@cross_origin()
+#@auth.login_required
 def view_all_delievery_man ():
  Users =  User.objects().all()
  output = []
