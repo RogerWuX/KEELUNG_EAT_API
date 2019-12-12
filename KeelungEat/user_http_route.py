@@ -59,6 +59,7 @@ def get_auth_token():
     token = g.user.generate_auth_token()
     token = str(token, encoding='utf8')
     User.objects(id = str(g.user.id)).update(token = token)
+
     print(str(g.user['id']))
     response=make_response(token)  
     response.set_cookie('token',token, max_age=600) 
@@ -78,7 +79,8 @@ def check():
 @auth.login_required
 def auth():
     output = []
-    output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel } )
+
+    output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel, 'token': g.user.token} )
     return jsonify(output)
 
 @app.route('/User/View_Delivery' , methods = ['GET']) 
