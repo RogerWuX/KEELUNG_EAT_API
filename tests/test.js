@@ -82,7 +82,7 @@ var socketTestInfos=[
 {
 	namespace:'admin',
 	connect_button:'管理員訂單管理_連接',
-	query_parameter:{token:'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3NjA4NzQwMSwiZXhwIjoxNTc2MDg4MDAxfQ.eyJpZCI6IjVkZjEwZmVlNGI4ODZjNzE0NGEzMTM2OCJ9.59t5Cshdyrh5pGvbHRBa66OCtiJb4kKZqtTVGCMITMeMDjdVQltBn7CZfGLM9-d1md97EMyVPgObNxg-8gAnRg'},
+	query_parameter:{token:'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3NjA4ODkxNSwiZXhwIjoxNTc2MDg5NTE1fQ.eyJpZCI6IjVkZGJkZDEyNWI0NDIzNzBkNDZhMzZlZSJ9.yvk0mmIyUTVMjNMaiVHltsznMna9PC2IW04jzIQGBSV6O-ux5fdyT3Kc6n_F_4hC1Z9jW5nLXug0iLT8d5l_Bg'},
 	event_handlers:[
 	{
 		event_name:'connect',
