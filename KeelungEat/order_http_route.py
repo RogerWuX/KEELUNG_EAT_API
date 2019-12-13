@@ -59,6 +59,7 @@ def order_state_update(order_id):
 		if Order.delivery_state_choice[index]==order_doc.delivery_state and index < len(Order.delivery_state_choice)-1:
 			order_doc.delivery_state=Order.delivery_state_choice[index+1]
 			order_doc.save()
+			socketio.emit('order_state_change',Order.delivery_state_choice[index+1],namespace='/consumer',room=str(order_doc.consumer_id),broadcast=True)
 			return jsonify({"message":'success'})
 	return jsonify({"message":'failed'})
 	

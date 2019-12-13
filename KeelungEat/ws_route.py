@@ -140,4 +140,16 @@ def restaurant_order_confirm_handler(order_id):
 def restaurant_disconnect_handler():
 	print('restaurant disconnect')
 
+@socketio.on('connect',namespace='/consumer')
+def consumer_connect_handler():
+	print('consumer connect')
+	user=User.objects(token=request.args.get('token')).first()
+	if user==None  or user.identity!='0':
+		disconnect()
+		return
+	join_room(str(user.id))
+	
 
+@socketio.on('disconnect',namespace='/consumer')
+def consumer_disconnect_handler():
+	print('consumer disconnect')
