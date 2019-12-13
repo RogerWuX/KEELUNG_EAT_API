@@ -16,15 +16,15 @@ def admin_connect_handler():
 	print('admin connect')
 	user=User.objects(token=request.args.get('token')).first()
 	print(user)
-	if user==None:
+	if user==None or user.identity!='4':
 		disconnect()
 		return
 	session['user']=user
-	order_dicts=Order.objects().as_pymongo()
-	print(order_dicts)
+	order_dicts=list(Order.objects().as_pymongo())
+
 	if order_dicts==None:
 		return
-	order_dicts=sorted(order_dicts,key=lambda e :Order.delivery_state_key(e['delivery_state']))
+	#order_dicts=sorted(order_dicts,key=lambda e :Order.delivery_state_key(e['delivery_state']))
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
 		order_store=Store.objects(id=order_dict['store_id']).first()
@@ -71,8 +71,7 @@ def admin_disconnect_handler():
 def delivery_man_connect_handler():
 	print('delivery_man connect')
 	user=User.objects(token=request.args.get('token')).first()
-	print(user)
-	if user==None :
+	if user==None  or user.identity!='1':
 		disconnect()
 		return
 	session['user']=user
@@ -108,8 +107,7 @@ def delivery_man_disconnect_handler():
 def restaurant_connect_handler():
 	print('restaurant connect')
 	user=User.objects(token=request.args.get('token')).first()
-	print(user)
-	if user==None :
+	if user==None or user.identity!='2':
 		disconnect()
 		return
 	session['store']=Store.objects(owner_id=str(user.id)).first()

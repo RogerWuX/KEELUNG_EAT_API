@@ -1,4 +1,3 @@
-
 var jqueryScriptElement = document.createElement('script'); 
 jqueryScriptElement.src = 'jquery3.4.js';
 jqueryScriptElement.type = 'text/javascript';
@@ -20,6 +19,7 @@ function createButton(buttonName,id,onclickFunctionName)
 
 var ajaxTestInfos=[
 {
+
 	buttonName:"註冊",
 	url:'http://127.0.0.1:5000/register',
 	type:"POST",
@@ -35,12 +35,15 @@ var ajaxTestInfos=[
 	}
 },
 {
+
 	buttonName:"登入",
 	url:'http://127.0.0.1:5000/login',
 	type:"POST",
 	data:{
+
 		email: "gg@gmail.com",
 		password: "aa"	
+
 	}
 },
 {
