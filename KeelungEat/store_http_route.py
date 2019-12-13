@@ -1,5 +1,6 @@
 import KeelungEat.models
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory, abort
+from werkzeug.utils import secure_filename
 from mongoengine import *
 import mongoengine as me
 import json
@@ -9,6 +10,9 @@ from .models import *
 #from flask_httpauth import HTTPBasicAuth
 from .auth import *
 import requests
+import time
+import os
+import base64
 
 
 #auth = HTTPBasicAuth()
@@ -149,3 +153,36 @@ def distance():
 	arr.append({'distance' : distance, 'duration' : duration, 'fee' : fee})
 
 	return jsonify(arr)
+
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+ALLOWED_EXTENSIONS = set(['txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF'])
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+@app.route('/image/upload', methods=['POST'], strict_slashes=False)
+def api_upload():
+    file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)
+    f = request.files['file']  
+    if f and allowed_file(f.filename):  
+        fname = secure_filename(f.filename)
+        #print fname
+        ext = fname.rsplit('.', 1)[1] 
+        unix_time = int(time.time())
+        new_filename = str(unix_time) + '.' + ext  
+        f.save(os.path.join(file_dir, new_filename)) 
+       
+
+        store = Store.objects(name = request.form['store_name']).get()
+        for food in store.foods:
+        	if food['name'] == request.form['food_name']:
+        		food['image_url'] = app.config['UPLOAD_FOLDER'] + new_filename
+        		break;
+        store.save()
+		
+        return jsonify({"errmsg": "success", "fileName": new_filename})
+    else:
+        return jsonify({"errmsg": "fail"})
