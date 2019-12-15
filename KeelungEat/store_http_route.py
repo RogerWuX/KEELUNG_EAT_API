@@ -175,7 +175,6 @@ def api_upload():
         new_filename = str(unix_time) + '.' + ext  
         f.save(os.path.join(file_dir, new_filename)) 
        
-
         store = Store.objects(name = request.form['store_name']).get()
         for food in store.foods:
         	if food['name'] == request.form['food_name']:
