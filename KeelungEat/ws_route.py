@@ -147,8 +147,20 @@ def consumer_connect_handler():
 	if user==None  or user.identity!='0':
 		disconnect()
 		return
+	order_dicts=list(Order.objects(consumer_id=user.id).as_pymongo())
+	if order_dicts==None:
+		return
+	for order_dict in order_dicts:
+		Order.dict_to_string(order_dict)
+		order_store=Store.objects(id=order_dict['store_id']).first()
+		order_dict['store_name']=order_store.name
+		for food in order_dict['foods']:
+			for food_info in order_store.foods:
+				if food_info['id'] == food['food_id'] :
+					food['name']=food_info['name']
+	emit('order_data',json.dumps(order_dicts))
 	join_room(str(user.id))
-	
+
 
 @socketio.on('disconnect',namespace='/consumer')
 def consumer_disconnect_handler():

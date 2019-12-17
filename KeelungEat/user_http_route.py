@@ -62,11 +62,27 @@ def get_auth_token():
 
     print(str(g.user['id']))
     response=make_response(token)  
-    response.set_cookie('token',token, max_age=600) 
+    response.set_cookie('token',token, max_age=3600) 
     session['token']=token 
     return response
 
 #-----------------------------------------------------------
+@app.route("/auth/modify", methods=['POST'])
+@auth.login_required
+def auth_modify():
+    data = request.json
+    User.objects(id = str(g.user.id)).update(
+      name = str(data['name']),
+      email = str(data['email']),
+      district = str(data['district']),
+      address = str(data['address']),
+      tel = str(data['tel']),
+    )
+
+    output = []
+    output.append( {'id': str(g.user.id) , 'name' : g.user.name , 'email' : g.user.email , 'password' : g.user.password , 'district' : g.user.district , 'address' : g.user.address , 'identity' : g.user.identity , 'status' : g.user.status , 'tel' : g.user.tel, 'token': g.user.token} )
+    return jsonify(output)
+
 @app.route('/check',methods=['get'])
 def check():
     token=request.cookies.get('token')

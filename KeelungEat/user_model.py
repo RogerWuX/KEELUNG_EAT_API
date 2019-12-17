@@ -24,7 +24,7 @@ class User(Document):
 		return custom_app_context.verify(password, self.password) 
 
     # 獲取token，有效時間10min
-	def generate_auth_token(self, expiration=600):
+	def generate_auth_token(self, expiration=3600):
 		s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
 		print(str(self.id))
 		return s.dumps({'id': str(self.id)})
