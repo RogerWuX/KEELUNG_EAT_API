@@ -159,7 +159,7 @@ def geo():
 	api_key ='AIzaSyB2qSt6SBvkcbnaKYLSlpuTI9RNYtR9NSg'
 	url ='https://maps.googleapis.com/maps/api/geocode/json?'
 	json_data = request.get_json()
-	address = str(json_data['address'])
+	address = '202基隆市'+str(json_data['address'])
 
 	r = requests.get(url + 'address=' + address +
 					'&key=' + api_key) 
