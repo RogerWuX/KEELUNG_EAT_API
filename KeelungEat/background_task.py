@@ -2,7 +2,7 @@ from . import socketio
 from .models import *
 import datetime 
 
-EXPIRED_ORDER_CLEAN_INTERVAL_SEC=10
+EXPIRED_ORDER_CLEAN_INTERVAL_SEC=100
 
 def expired_order_cleaner():
 	while True:
