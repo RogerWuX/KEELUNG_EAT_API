@@ -101,6 +101,33 @@ def delivery_man_order_accept_handler(order_id):
 @socketio.on('disconnect',namespace='/delivery_man')
 def delivery_man_disconnect_handler():
 	print('delivery_man disconnect')
+
+@socketio.on('connect',namespace='/delivery_man_current')
+def delivery_man_current_connect_handler():
+	print('delivery_man_current connect')
+	user=User.objects(token=request.args.get('token')).first()
+	if user==None  or user.identity!='1':
+		disconnect()
+		return
+	session['user']=user
+	order_dicts=list(Order.objects(delivery_id=str(user.id)).as_pymongo())
+	print(order_dicts)
+	if order_dicts==None:
+		return
+	for order_dict in order_dicts:
+		Order.dict_to_string(order_dict)
+		order_store=Store.objects(id=order_dict['store_id']).first()
+		order_dict['store_name']=order_store.name
+		for food in order_dict['foods']:
+			for food_info in order_store.foods:
+				if food_info['id'] == food['food_id'] :
+					food['name']=food_info['name']
+	emit('order_data',json.dumps(order_dicts))
+
+
+@socketio.on('disconnect',namespace='/delivery_man_current')
+def delivery_man_current_disconnect_handler():
+	print('delivery_man_current disconnect')
 	
 	
 @socketio.on('connect',namespace='/restaurant')
@@ -119,6 +146,7 @@ def restaurant_connect_handler():
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
 		order_store=Store.objects(id=order_dict['store_id']).first()
+		order_dict['store_name']=order_store.name
 		for food in order_dict['foods']:
 			for food_info in order_store.foods:
 				if food_info['id'] == food['food_id'] :
@@ -147,7 +175,7 @@ def consumer_connect_handler():
 	if user==None  or user.identity!='0':
 		disconnect()
 		return
-	order_dicts=list(Order.objects(consumer_id=user.id).as_pymongo())
+	order_dicts=list(Order.objects(consumer_id=user.id, delivery_state__in=['pending','accepted','delivering']).as_pymongo())
 	if order_dicts==None:
 		return
 	for order_dict in order_dicts:
