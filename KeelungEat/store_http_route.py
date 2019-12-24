@@ -121,13 +121,13 @@ def update_store():
 	store.save()
 	return jsonify(True)
 
-@app.route('/distance', methods=['GET'])
+@app.route('/distance', methods=['POST'])
 def distance():
 	api_key ='AIzaSyB2qSt6SBvkcbnaKYLSlpuTI9RNYtR9NSg'
 	url ='https://maps.googleapis.com/maps/api/distancematrix/json?'
 	json_data = request.get_json()
-	source = json_data['source']
-	dest = json_data['dest']
+	source = '202基隆市'+str(json_data['source'])
+	dest = '202基隆市'+str(json_data['dest'])
 
 	r = requests.get(url + 'origins=' + source +
 					'&destinations=' + dest +
@@ -151,6 +151,23 @@ def distance():
 	arr.append({'distance' : distance, 'duration' : duration, 'fee' : fee})
 
 	return jsonify(arr)
+
+@app.route('/geo', methods=['POST'])
+def geo():
+	api_key ='AIzaSyB2qSt6SBvkcbnaKYLSlpuTI9RNYtR9NSg'
+	url ='https://maps.googleapis.com/maps/api/geocode/json?'
+	json_data = request.get_json()
+	address = '202基隆市'+str(json_data['address'])
+
+	r = requests.get(url + 'address=' + address +
+					'&key=' + api_key) 
+	output = r.json() 
+	results = output['results']
+	geo = results[0]
+	geometry = geo['geometry']
+	location = geometry['location']
+
+	return jsonify(location)
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
