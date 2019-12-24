@@ -91,36 +91,34 @@ def delete_store():
 def update_store():
 	"""http://localhost:5000/store/update?store_id=id&name=ntou&district=中正區&address=北寧路&tel=12345678&info=學校"""
 	data = request.json
-	Store.objects(id = str(data['store_id'])).update(
-		name = str(data['name']),
-	    district = str(data['district']),
-	    address = str(data['address']),
-	    tel = str(data['tel']),
-	    info = str(data['info'])
-		)
-
-	"""foods"""
-
-	food = []
-	id = str(ObjectId())
-	data = request.json
-	store = Store.objects(id = str(data['store_id'])).get()
-
-	ele = 0
+	store=Store.objects(id = str(data['store_id'])).first()
+	store.name=str(data['name'])
+	store.district=str(data['district'])
+	store.address=str(data['address'])
+	store.tel=str(data['tel'])
+	store.info=str(data['info'])
+	
+	new_foods=list()
+	update_food=dict()
+	for food_data in data['foods']:
+		if food_data['id']==0:
+			food_data['id']== str(ObjectId())
+			new_food.append(food_data)
+		else:
+			update_food[food_data['id']]=food_data
+	index=0
 	for food in store.foods:
-		del store.foods[ele]
-		ele += 1
-
+		if food['id'] in update_food:
+			food['name']=update_food[food['id']]['name']
+			food['price']=update_food[food['id']]['price']
+			food['type']=update_food[food['id']]['type']
+		else:
+			del store.foods[index]
+		
+	for new_food in new_foods:
+		store.foods.append(new_food)
+		
 	store.save()
-
-	store.foods = data['foods']
-	store.save()
-
-	for food in store.foods:
-		id = str(ObjectId())
-		food['id'] = id
-		store.save()
-
 	return jsonify(True)
 
 @app.route('/distance', methods=['POST'])
