@@ -10,5 +10,3 @@ if __name__=='__main__':
 #, keyfile='key.pem', certfile='cert.pem'
 
 	
-	
-	

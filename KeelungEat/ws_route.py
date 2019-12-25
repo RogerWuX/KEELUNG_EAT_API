@@ -124,7 +124,22 @@ def delivery_man_current_connect_handler():
 					food['name']=food_info['name']
 	emit('order_data',json.dumps(order_dicts))
 
-
+@socketio.on('delivery_state_update',namespace='/delivery_man_current')
+def delivery_man_order_accept_handler(order_id):
+	print('delivery_man_current delivery_state_update')
+	order_doc=Order.objects(id=order_id,consumer_id=str(session['user'].id)).first()
+	if order_doc==None :
+		emit('delivery_state_update','failed')
+		return
+	for index in range(0,len(Order.delivery_state_choice)):
+		if Order.delivery_state_choice[index]==order_doc.delivery_state and index < len(Order.delivery_state_choice)-1:
+			order_doc.delivery_state=Order.delivery_state_choice[index+1]
+			order_doc.save()
+			socketio.emit('order_state_change',Order.delivery_state_choice[index+1],namespace='/consumer',room=str(order_doc.consumer_id),broadcast=True)
+			emit('delivery_state_update','success')
+			return
+	emit('delivery_state_update','failed')
+		
 @socketio.on('disconnect',namespace='/delivery_man_current')
 def delivery_man_current_disconnect_handler():
 	print('delivery_man_current disconnect')
