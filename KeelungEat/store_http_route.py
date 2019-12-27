@@ -47,7 +47,7 @@ def get_all_stores():
   stores = Store.objects().all()
   output = []
   for store in stores:
-    output.append({'owner_id' : str(store['owner_id']), 'id' : str(store['id']), 'name' : store['name'], 'district' : store['district'], 'address' : store['address'], 'tel' : store['tel'], 'info' : store['info'], 'foods' : store['foods']})
+    output.append({'owner_id' : str(store['owner_id']), 'id' : str(store['id']), 'name' : store['name'], 'district' : store['district'], 'address' : store['address'], 'image_url' : str(store['image_url']), 'tel' : store['tel'], 'info' : store['info'], 'foods' : store['foods']})
   return jsonify(output)
 
 @app.route('/store/search', methods=['POST'])
@@ -176,8 +176,30 @@ ALLOWED_EXTENSIONS = set(['txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-@app.route('/image/upload', methods=['POST'], strict_slashes=False)
-def api_upload():
+@app.route('/image/upload_store', methods=['POST'], strict_slashes=False)
+def api_upload_store():
+    file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)
+    f = request.files['file']  
+    if f and allowed_file(f.filename):  
+        fname = secure_filename(f.filename)
+        #print fname
+        ext = fname.rsplit('.', 1)[1] 
+        unix_time = int(time.time())
+        new_filename = str(unix_time) + '.' + ext  
+        f.save(os.path.join(file_dir, new_filename)) 
+       
+        store = Store.objects(name = request.form['store_name']).get()
+        store.image_url=app.config['UPLOAD_FOLDER'] + new_filename
+        store.save()
+
+        return jsonify({"errmsg": "success", "fileName": new_filename})
+    else:
+        return jsonify({"errmsg": "fail"})
+
+@app.route('/image/upload_food', methods=['POST'], strict_slashes=False)
+def api_upload_food():
     file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
     if not os.path.exists(file_dir):
         os.makedirs(file_dir)

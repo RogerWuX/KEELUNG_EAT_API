@@ -4,6 +4,7 @@ class Store(Document):
 	name = StringField(required=True)
 	district = StringField()
 	address = StringField()
+	image_url = StringField(null=True)
 	tel = StringField()
 	info = StringField()	
 	foods = ListField()
