@@ -125,7 +125,7 @@ def delivery_man_current_connect_handler():
 	emit('order_data',json.dumps(order_dicts))
 
 @socketio.on('delivery_state_update',namespace='/delivery_man_current')
-def delivery_man_order_accept_handler(order_id):
+def delivery_man_delivery_state_update_handler(order_id):
 	print('delivery_man_current delivery_state_update')
 	order_doc=Order.objects(id=order_id).first()
 	if order_doc==None :

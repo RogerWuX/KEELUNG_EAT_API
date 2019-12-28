@@ -47,6 +47,7 @@ def verify_password(email_or_token, password):
         """data = request.get_json()
         token = data['token']"""
         token=request.cookies.get('token')
+		#token=request.json.get('token')
         user = User.verify_auth_token(token)
         if not user:
             return False
@@ -86,6 +87,7 @@ def auth_modify():
 @app.route('/check',methods=['get'])
 def check():
     token=request.cookies.get('token')
+	#token=request.json.get('token')
     if token is None:
         return jsonify(False)
     else:
