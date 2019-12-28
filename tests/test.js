@@ -153,6 +153,30 @@ var socketTestInfos=[
 }
 ,
 {
+	namespace:'delivery_man_current',
+	connect_button:'外送員已接受訂單檢視_連接',
+	query_parameter:{token:'vvvvvvv'},
+	event_handlers:[
+	{
+		event_name:'connect',
+		handler:function(){console.log('delivery_man_current namespace connect established')}
+	},	
+	{
+		event_name:'delivery_state_update',
+		handler:function(data){console.log(data)}
+	}],
+	action:[
+	{
+		name:'外送員更新訂單',
+		event_name:'delivery_state_update',
+		data:'5dc3c34ff1733b1e786c8388'
+	}
+	]
+		
+	
+}
+,
+{
 	namespace:'restaurant',
 	connect_button:'餐廳待處理訂單檢視_連接',
 	query_parameter:{token:'eyJhbGciOiJIUzUxMiIsImlhdCI6MTU3NjA3NDE0MCwiZXhwIjoxNTc2MDc0NzQwfQ.eyJpZCI6IjVkZGJkZDEyNWI0NDIzNzBkNDZhMzZlZSJ9.f9HxBeCCbbCUIti_YGLM2KLt23z-JxeslE15htj7vidVWWjduYX6XcVMTFoPk3HOcRNuRj-zK5dOkhLtgKKXSg'},
