@@ -191,7 +191,7 @@ def api_upload_store():
         f.save(os.path.join(file_dir, new_filename)) 
        
         store = Store.objects(name = request.form['store_name']).get()
-        store.image_url=app.config['UPLOAD_FOLDER'] + new_filename
+        store.image_url=app.config['STATIC_FOLDER'] + new_filename
         store.save()
 
         return jsonify({"errmsg": "success", "fileName": new_filename})
@@ -215,7 +215,7 @@ def api_upload_food():
         store = Store.objects(name = request.form['store_name']).get()
         for food in store.foods:
         	if food['name'] == request.form['food_name']:
-        		food['image_url'] = app.config['UPLOAD_FOLDER'] + new_filename
+        		food['image_url'] = app.config['STATIC_FOLDER'] + new_filename
         		break;
         store.save()
 		
