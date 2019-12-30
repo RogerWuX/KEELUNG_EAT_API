@@ -254,7 +254,7 @@ function socketConnect()
 {
 	var index=this.id.split('_')[1]
 	console.log('http://localhost:5000/'+socketTestInfos[index].namespace)
-	var socket = io('http://localhost:5000/'+socketTestInfos[index].namespace,{query:socketTestInfos[index].query_parameter});
+	var socket = io('https://keelung-eat-api.herokuapp.com:28813/'+socketTestInfos[index].namespace,{query:socketTestInfos[index].query_parameter});
 	var event_handlers=socketTestInfos[index].event_handlers
 	for(var i=0;i<event_handlers.length;++i)
 	{		
