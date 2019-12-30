@@ -5,8 +5,8 @@ from os import environ
 
 if __name__=='__main__':
 	app.config.from_object(config.config)
-	socketio.run(app,host='0.0.0.0');
-#,port=environ['port']
+	socketio.run(app,host='0.0.0.0',port=environ['port']);
+#
 #, keyfile='key.pem', certfile='cert.pem'
 
 	
