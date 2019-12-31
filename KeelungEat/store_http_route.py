@@ -25,7 +25,7 @@ def search():
   stores = Store.objects(district = str(data['district'])).all()
   output = []
   for store in stores:
-    output.append({'owner_id' : str(store['owner_id']), 'id' : str(store['id']), 'name' : store['name'], 'district' : store['district'], 'address' : store['address'], 'tel' : store['tel'], 'info' : store['info'], 'foods' : store['foods']})
+    output.append({'owner_id' : str(store['owner_id']), 'id' : str(store['id']), 'name' : store['name'], 'district' : store['district'], 'address' : store['address'], 'image_url' : str(store['image_url']), 'tel' : store['tel'], 'info' : store['info'], 'foods' : store['foods']})
   return jsonify(output)
 
 @app.route('/user', methods=['GET'])
