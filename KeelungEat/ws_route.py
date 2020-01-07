@@ -129,10 +129,10 @@ def delivery_man_delivery_state_update_handler():
 	print('delivery_man_state_update')
 
 	user_doc=User.objects(id=session['user'].id).first()
-	if user_doc.status==1:
-		user_doc.status=0
+	if user_doc.status=='1':
+		user_doc.status='0'
 	else:
-		user_doc.status=1
+		user_doc.status='1'
 	user_doc.save()
 	
 	
