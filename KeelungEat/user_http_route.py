@@ -2,7 +2,7 @@ from flask import Flask , jsonify , request, abort, g, make_response, Response,s
 from mongoengine import *
 import json
 from bson import ObjectId
-#from flask_cors import cross_origin
+from flask_cors import cross_origin
 from .models import *
 #from flask_httpauth import HTTPBasicAuth
 import os
@@ -95,6 +95,7 @@ def check():
 
 @app.route("/auth", methods=['GET'])
 @auth.login_required
+@cross_origin()
 def auth():
     output = []
 

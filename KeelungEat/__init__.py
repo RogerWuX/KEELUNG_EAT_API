@@ -11,7 +11,7 @@ STATIC_FOLDER = 'http://localhost:5000/image/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['STATIC_FOLDER'] = STATIC_FOLDER
 
-socketio=SocketIO(app,cors_allowed_origins='*')
+socketio=SocketIO(app,cors_allowed_origins='*', supports_credentials=True)
 
 import KeelungEat.http_route
 import KeelungEat.ws_route
