@@ -95,7 +95,7 @@ def check():
 
 @app.route("/auth", methods=['GET'])
 @auth.login_required
-@cross_origin()
+#@cross_origin()
 def auth():
     output = []
 
