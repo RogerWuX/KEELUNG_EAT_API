@@ -111,7 +111,6 @@ def delivery_man_current_connect_handler():
 		return
 	session['user']=user
 	order_dicts=list(Order.objects(delivery_id=str(user.id)).as_pymongo())
-	print(order_dicts)
 	if order_dicts==None:
 		return
 	for order_dict in order_dicts:
@@ -125,15 +124,15 @@ def delivery_man_current_connect_handler():
 	emit('order_data',json.dumps(order_dicts))
 
 @socketio.on('delivery_man_state_update',namespace='/delivery_man_current')
-def delivery_man_delivery_state_update_handler():
+def delivery_man_state_update_handler():
 	print('delivery_man_state_update')
-
 	user_doc=User.objects(id=session['user'].id).first()
 	if user_doc.status=='1':
 		user_doc.status='0'
 	else:
 		user_doc.status='1'
 	user_doc.save()
+	emit('delivery_man_state_update',str(user_doc.status))
 	
 	
 @socketio.on('delivery_state_update',namespace='/delivery_man_current')
