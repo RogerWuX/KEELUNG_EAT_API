@@ -28,12 +28,13 @@ def admin_connect_handler():
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
 		order_store=Store.objects(id=order_dict['store_id']).first()
-		order_dict['store_name']=order_store.name
-		for food in order_dict['foods']:
-			for food_info in order_store.foods:
-				if food_info['id'] == food['food_id'] :
-					food['name']=food_info['name']
-					
+		if order_store != None:
+			order_dict['store_name']=order_store.name
+			for food in order_dict['foods']:
+				for food_info in order_store.foods:
+					if food_info['id'] == food['food_id'] :
+						food['name']=food_info['name']
+						
 	emit('order_data',json.dumps(order_dicts))
 
 @socketio.on('order_delete',namespace='/admin')
