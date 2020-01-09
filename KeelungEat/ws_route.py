@@ -184,22 +184,31 @@ def restaurant_connect_handler():
 	join_room(session['store'].id)
 
 
-@socketio.on('order_state_update',namespace='/restaurant')
-def restaurant_order_confirm_handler(message):
-	print('restaurant order_state_update')
-	rq=json.loads(message)
-	order_doc=Order.objects(id=rq['order_id'],store_id=session['store'].id)
-	if order_doc==None :
-		emit('order_state_update','failed')
+@socketio.on('order_state_confirm',namespace='/restaurant')
+def restaurant_order_confirm_handler(order_id):
+	print('restaurant order_confirm')
+	order_doc=Order.objects(id=order_id,store_id=session['store'].id).first()
+	if order_doc==None or order_doc.store_state=='confirmed':
+		emit('order_state_confirm',json.dumps({'order_id':order_id,'message':'fail'}))
 		return
-	if rq['state'] =='confirmed' :
-		order_doc.store_state='confirmed'
-		order_doc.save()
-		socketio.emit('order_data',order_doc.to_json(),namespace='/delivery_man',broadcast=True)
-	else :
-		order_doc.delete()
-	emit('order_state_update','success')	
+	order_doc.store_state='confirmed'
+	order_doc.save()
+	socketio.emit('order_data',order_doc.to_json(),namespace='/delivery_man',broadcast=True)
+	emit('order_state_confirm',json.dumps({'order_id':order_id,'message':'success'}))
 
+
+@socketio.on('order_state_reject',namespace='/restaurant')
+def restaurant_order_reject_handler(order_id):	
+	print('restaurant order_reject')
+	order_doc=Order.objects(id=order_id,store_id=session['store'].id).first()
+	if order_doc==None or order_doc.store_state=='confirmed':
+		emit('order_state_reject',json.dumps({'order_id':order_id,'message':'fail'}))
+		return	
+	order_doc.delete()	
+	socketio.emit('order_remove',order_id,namespace='/delivery_man',broadcast=True)
+	emit('order_state_reject',json.dumps({'order_id':order_id,'message':'success'}))
+
+	
 @socketio.on('disconnect',namespace='/restaurant')
 def restaurant_disconnect_handler():
 	print('restaurant disconnect')
