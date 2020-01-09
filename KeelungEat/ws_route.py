@@ -71,7 +71,7 @@ def admin_disconnect_handler():
 @socketio.on('connect',namespace='/delivery_man')
 def delivery_man_connect_handler():
 	print('delivery_man connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	if user==None  or user.identity!='1':
 		disconnect()
 		return
@@ -106,7 +106,7 @@ def delivery_man_disconnect_handler():
 @socketio.on('connect',namespace='/delivery_man_current')
 def delivery_man_current_connect_handler():
 	print('delivery_man_current connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	if user==None  or user.identity!='1':
 		disconnect()
 		return
@@ -163,7 +163,7 @@ def delivery_man_current_disconnect_handler():
 @socketio.on('connect',namespace='/restaurant')
 def restaurant_connect_handler():
 	print('restaurant connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	if user==None or user.identity!='2':
 		disconnect()
 		return
@@ -201,7 +201,7 @@ def restaurant_disconnect_handler():
 @socketio.on('connect',namespace='/consumer')
 def consumer_connect_handler():
 	print('consumer connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	if user==None  or user.identity!='0':
 		disconnect()
 		return
