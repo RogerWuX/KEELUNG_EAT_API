@@ -14,7 +14,7 @@ from.auth import auth
 @socketio.on('connect',namespace='/admin')
 def admin_connect_handler():
 	print('admin connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	print(user)
 	if user==None or user.identity!='4':
 		disconnect()
