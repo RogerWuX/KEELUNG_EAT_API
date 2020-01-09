@@ -13,7 +13,7 @@ class User(Document):
 	status = StringField()
 	tel = StringField()
 	token = StringField()
-	meta = {'collection': 'User'}
+	meta = {'collection':'User'}
 
 	# 密碼加密
 	def hash_password(self, password):

@@ -76,8 +76,7 @@ def delivery_man_connect_handler():
 		disconnect()
 		return
 	session['user']=user
-	order_dicts=list(Order.objects(delivery_state='pending').as_pymongo())
-	print(order_dicts)
+	order_dicts=list(Order.objects(delivery_state='pending',store_state='confirmed').as_pymongo())
 	if order_dicts==None:
 		return
 	for order_dict in order_dicts:
@@ -111,7 +110,7 @@ def delivery_man_current_connect_handler():
 		disconnect()
 		return
 	session['user']=user
-	order_dicts=list(Order.objects(delivery_id=str(user.id)).as_pymongo())
+	order_dicts=list(Order.objects(delivery_id=str(user.id),delivery_state__ne='finished').as_pymongo())
 	if order_dicts==None:
 		return
 	for order_dict in order_dicts:
@@ -185,14 +184,21 @@ def restaurant_connect_handler():
 	join_room(session['store'].id)
 
 
-@socketio.on('order_confirm',namespace='/restaurant')
-def restaurant_order_confirm_handler(order_id):
-	print('restaurant order_confirm')	
-	if Order.objects(id=order_id,store_id=session['store'].id).update_one(set__store_state='confirmed')==1 :
-		emit('order_confirm','success')
-	else:
-		emit('order_confirm','failed')
-	
+@socketio.on('order_state_update',namespace='/restaurant')
+def restaurant_order_confirm_handler(message):
+	print('restaurant order_state_update')
+	rq=json.loads(message)
+	order_doc=Order.objects(id=rq['order_id'],store_id=session['store'].id)
+	if order_doc==None :
+		emit('order_state_update','failed')
+		return
+	if rq['state'] =='confirmed' :
+		order_doc.store_state='confirmed'
+		order_doc.save()
+		socketio.emit('order_data',order_doc.to_json(),namespace='/delivery_man',broadcast=True)
+	else :
+		order_doc.delete()
+	emit('order_state_update','success')	
 
 @socketio.on('disconnect',namespace='/restaurant')
 def restaurant_disconnect_handler():
