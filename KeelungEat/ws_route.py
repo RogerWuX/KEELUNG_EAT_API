@@ -116,6 +116,9 @@ def delivery_man_current_connect_handler():
 		return
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
+		consumer_doc=User.objects(id=order_dict['consumer_id']).first()
+		order_dict['consumer_tel']=consumer_doc.tel
+		order_dict['consumer_name']=consumer_doc.name
 		order_store=Store.objects(id=order_dict['store_id']).first()
 		order_dict['store_name']=order_store.name
 		for food in order_dict['foods']:
