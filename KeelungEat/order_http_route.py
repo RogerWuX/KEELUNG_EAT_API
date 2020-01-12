@@ -38,7 +38,6 @@ def order_post():
 	Order.dict_to_string(order)
 	order_json=json.dumps(order)
 	socketio.emit('order_data',order_json,namespace='/admin',broadcast=True)
-	socketio.emit('order_data',order_json,namespace='/delivery_man',broadcast=True)
 	socketio.emit('order_data',order_json,namespace='/restaurant',room=order['store_id'],broadcast=True)
 	return jsonify({'_id':order['_id']})
 

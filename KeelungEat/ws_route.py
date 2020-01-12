@@ -14,7 +14,7 @@ from.auth import auth
 @socketio.on('connect',namespace='/admin')
 def admin_connect_handler():
 	print('admin connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	print(user)
 	if user==None or user.identity!='4':
 		disconnect()
@@ -28,12 +28,13 @@ def admin_connect_handler():
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
 		order_store=Store.objects(id=order_dict['store_id']).first()
-		order_dict['store_name']=order_store.name
-		for food in order_dict['foods']:
-			for food_info in order_store.foods:
-				if food_info['id'] == food['food_id'] :
-					food['name']=food_info['name']
-					
+		if order_store != None:
+			order_dict['store_name']=order_store.name
+			for food in order_dict['foods']:
+				for food_info in order_store.foods:
+					if food_info['id'] == food['food_id'] :
+						food['name']=food_info['name']
+						
 	emit('order_data',json.dumps(order_dicts))
 
 @socketio.on('order_delete',namespace='/admin')
@@ -70,13 +71,12 @@ def admin_disconnect_handler():
 @socketio.on('connect',namespace='/delivery_man')
 def delivery_man_connect_handler():
 	print('delivery_man connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	if user==None  or user.identity!='1':
 		disconnect()
 		return
 	session['user']=user
-	order_dicts=list(Order.objects(delivery_state='pending').as_pymongo())
-	print(order_dicts)
+	order_dicts=list(Order.objects(delivery_state='pending',store_state='confirmed').as_pymongo())
 	if order_dicts==None:
 		return
 	for order_dict in order_dicts:
@@ -105,16 +105,19 @@ def delivery_man_disconnect_handler():
 @socketio.on('connect',namespace='/delivery_man_current')
 def delivery_man_current_connect_handler():
 	print('delivery_man_current connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	if user==None  or user.identity!='1':
 		disconnect()
 		return
 	session['user']=user
-	order_dicts=list(Order.objects(delivery_id=str(user.id)).as_pymongo())
+	order_dicts=list(Order.objects(delivery_id=str(user.id),delivery_state__ne='finished').as_pymongo())
 	if order_dicts==None:
 		return
 	for order_dict in order_dicts:
 		Order.dict_to_string(order_dict)
+		consumer_doc=User.objects(id=order_dict['consumer_id']).first()
+		order_dict['consumer_tel']=consumer_doc.tel
+		order_dict['consumer_name']=consumer_doc.name
 		order_store=Store.objects(id=order_dict['store_id']).first()
 		order_dict['store_name']=order_store.name
 		for food in order_dict['foods']:
@@ -159,7 +162,7 @@ def delivery_man_current_disconnect_handler():
 @socketio.on('connect',namespace='/restaurant')
 def restaurant_connect_handler():
 	print('restaurant connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	if user==None or user.identity!='2':
 		disconnect()
 		return
@@ -181,15 +184,31 @@ def restaurant_connect_handler():
 	join_room(str(session['store'].id))
 
 
-@socketio.on('order_confirm',namespace='/restaurant')
+@socketio.on('order_state_confirm',namespace='/restaurant')
 def restaurant_order_confirm_handler(order_id):
-	print('restaurant order_confirm')	
-	if Order.objects(id=order_id,store_id=session['store'].id).update_one(set__store_state='confirmed')==1 :
-		emit('order_confirm','success')
-	else:
-		emit('order_confirm','failed')
-	
+	print('restaurant order_confirm')
+	order_doc=Order.objects(id=order_id,store_id=session['store'].id).first()
+	if order_doc==None or order_doc.store_state=='confirmed':
+		emit('order_state_confirm',json.dumps({'order_id':order_id,'message':'fail'}))
+		return
+	order_doc.store_state='confirmed'
+	order_doc.save()
+	socketio.emit('order_data',order_doc.to_json(),namespace='/delivery_man',broadcast=True)
+	emit('order_state_confirm',json.dumps({'order_id':order_id,'message':'success'}))
 
+
+@socketio.on('order_state_reject',namespace='/restaurant')
+def restaurant_order_reject_handler(order_id):	
+	print('restaurant order_reject')
+	order_doc=Order.objects(id=order_id,store_id=session['store'].id).first()
+	if order_doc==None or order_doc.store_state=='confirmed':
+		emit('order_state_reject',json.dumps({'order_id':order_id,'message':'fail'}))
+		return	
+	order_doc.delete()	
+	socketio.emit('order_remove',order_id,namespace='/delivery_man',broadcast=True)
+	emit('order_state_reject',json.dumps({'order_id':order_id,'message':'success'}))
+
+	
 @socketio.on('disconnect',namespace='/restaurant')
 def restaurant_disconnect_handler():
 	print('restaurant disconnect')
@@ -197,7 +216,7 @@ def restaurant_disconnect_handler():
 @socketio.on('connect',namespace='/consumer')
 def consumer_connect_handler():
 	print('consumer connect')
-	user=User.objects(token=request.args.get('token')).first()
+	user=User.objects(token=request.cookies.get('token')).first()
 	if user==None  or user.identity!='0':
 		disconnect()
 		return

@@ -1,7 +1,7 @@
 from mongoengine import *
 class Order(Document):
 	delivery_state_choice=['pending','accepted','delivering','finished']
-	store_state_choice=['unconfirmed','confirmed']
+	store_state_choice=['rejected','unconfirmed','confirmed']
 	receive_time=DateTimeField()
 	delivery_time=DateTimeField()
 	district=StringField()
