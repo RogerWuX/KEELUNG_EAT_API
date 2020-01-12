@@ -178,7 +178,7 @@ def restaurant_connect_handler():
 				if food_info['id'] == food['food_id'] :
 					food['name']=food_info['name']
 	emit('order_data',json.dumps(order_dicts))
-	join_room(session['store'].id)
+	join_room(str(session['store'].id))
 
 
 @socketio.on('order_confirm',namespace='/restaurant')

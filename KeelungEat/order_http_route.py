@@ -18,6 +18,8 @@ def test():
 def order_post():
 	print('order_post')
 	print(request.json.get('foods'))
+	if g.user.identity!=0 :
+		return jsonify({'message':'failed'})
 	order=Order(
 		receive_time=datetime.strptime(request.json.get('receive_time'),"%Y-%m-%d %H:%M:%S"),#,
 		delivery_time=None,

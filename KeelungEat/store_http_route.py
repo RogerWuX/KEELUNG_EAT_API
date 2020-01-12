@@ -100,6 +100,7 @@ def update_store():
 	
 	new_foods=list()
 	update_food=dict()
+	print(data['foods'])
 	for food_data in data['foods']:
 		if food_data['id']==0:
 			food_data['id']== str(ObjectId())
